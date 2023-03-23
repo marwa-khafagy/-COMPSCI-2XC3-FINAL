@@ -1,6 +1,6 @@
 import min_heap 
 
-def dijkstra(G, source, k):
+def dijkstra_approx(G, source, k):
     pred = {} #Predecessor dictionary. Isn't returned, but here for your understanding
     dist = {} #Distance dictionary
     relax = {} #Counts how many times a node has been relaxed
@@ -27,7 +27,7 @@ def dijkstra(G, source, k):
                 relax[neighbour] += 1
     return dist
 
-def bellman_ford(G, source, k):
+def bellman_ford_approx(G, source, k):
     pred = {} #Predecessor dictionary. Isn't returned, but here for your understanding
     dist = {} #Distance dictionary
     relax = {} #Counts how many times a node has been relaxed
