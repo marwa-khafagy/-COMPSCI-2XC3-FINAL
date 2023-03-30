@@ -27,6 +27,7 @@ def dijkstra_approx(G, source, k):
                 relax[neighbour] += 1
     return dist
 
+
 def bellman_ford_approx(G, source, k):
     pred = {} #Predecessor dictionary. Isn't returned, but here for your understanding
     dist = {} #Distance dictionary

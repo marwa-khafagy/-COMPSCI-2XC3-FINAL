@@ -1,5 +1,5 @@
 import shortest_path_approx
-import final_project_part1
+import source.final_project_part1
 
 #experiment ideas
     #1. given random graphs with a constant number of nodes, 
