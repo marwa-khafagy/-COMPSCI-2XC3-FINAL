@@ -2,6 +2,7 @@
 /*/
 !/code/
 /code/__pycache__
+/code/source/__pycache__
 /code/rbt_correctness.py
 !main.tex
 !.gitignore
