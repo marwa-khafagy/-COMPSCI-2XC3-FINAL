@@ -46,6 +46,7 @@ def determiningTimeComplexity(k = 10):
     # Plots
     emptyPlot = PlotGroup("Graph X Nodes, 0 Edges")
     densePlot = PlotGroup("Graph X Nodes, Total Edges")
+    xthree = PlotGroup("x^3")
 
     logScale = [0, 1, 2, 4, 8, 16, 32, 64, 96, 128, 192, 256, 320, 512]
     for n in logScale:
@@ -85,6 +86,7 @@ def determiningTimeComplexity(k = 10):
         # Add Point
         emptyPlot.add_point(n, emptyTime / k)
         densePlot.add_point(n, denseTime / k)
+        xthree.add_point(n, n**3)
 
         print(f'Plotted n={n}')
 
@@ -92,15 +94,19 @@ def determiningTimeComplexity(k = 10):
     # Graph
 
     plt.title("Time to Compute Mystery Function vs Weighted Edge Node Count (Log Graph)")
-
     emptyPlot.plotlog()
     densePlot.plotlog()
+    xthree.plotlog()
+    
+    plt.legend()
     plt.show()
 
     plt.title("Time to Compute Mystery Function vs Weighted Edge Node Count")
-
     emptyPlot.plot()
     densePlot.plot()
+    xthree.plot()
+
+    plt.legend()
     plt.show()
 
 determiningTimeComplexity()
