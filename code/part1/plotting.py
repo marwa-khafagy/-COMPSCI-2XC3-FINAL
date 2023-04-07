@@ -19,7 +19,7 @@ class PlotGroup:
         self.count += 1
 
     def plot(self):
-
+    
         if (self.colour == None):
             plot.plot(self.xpoints, self.ypoints, label=self.label)
         else:
@@ -27,6 +27,13 @@ class PlotGroup:
 
         #Plot If
         self.plot_vertical_line_after_y1()
+
+
+    def plotlog(self):
+        if (self.colour == None):
+            plot.loglog(self.xpoints, self.ypoints, label=self.label)
+        else:
+            plot.loglog(self.xpoints, self.ypoints, color=self.colour, label=self.label)
 
     def plot_vertical_line_after_y1(self):
 
