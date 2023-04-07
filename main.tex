@@ -97,12 +97,16 @@
 \subsection{A$^{*}$ Discussion}
 \begin{itemize}
     \item What issues with Dijkstra’s algorithm is A* trying to address?\\
-    The biggest problem with Dijkstra’s algorithm is that it considers all possible paths between nodes, which can lead the algorithm down unideal paths. Thus runtime may be wasted on paths unlikely to lead to the shortest path. 
-    Thus, when working with large graphs, Dijkstra’s algorithm becomes unnecessarily slow. 
+        The biggest problem with Dijkstra’s algorithm is that it considers all possible paths between nodes, which can lead the algorithm down unideal paths. Thus runtime may be wasted on paths unlikely to lead to the shortest path. 
+        Thus, when working with large graphs, Dijkstra’s algorithm becomes unnecessarily slow. 
     \item How would you empirically test Dijkstra’s vs A*?\\
-          To empirically test Dijkstra’s vs A*, we would compare the runtimes of finding the shortest path of graphs of varying sizes/densiy. 
-    \item If you generated an arbitrary heuristic function (similar to randomly generating weights), how would Dijkstra’s algorithm compare to A*?
+        To empirically test Dijkstra’s vs A*, we would compare the runtimes of finding the shortest path of graphs of varying sizes/densiy. 
+    \item If you generated an arbitrary heuristic function (similar to randomly generating weights), how would Dijkstra’s algorithm compare to A*?\\
+        In that case, they may perform similarly, or more likely, Dijkstra’s may outperferm A*. This is because this arbitrary heuristic function could lead the algorithm down even more unideal paths. On the other hand, Dijkstra would be more thorough and would consider all possible paths between nodes. A better heuristic function would estimate the distance between nodes and the destination node. 
     \item What applications would you use A* instead of Dijkstra’s?
+        In general, given a good heuristic function, A* is more efficient than Dijkstra’s algorithm. Thus, it would make sense to use A* in applications where there exists a heuristic function that can lead the algorithm in the right direction. 
+        An example is finding shortest paths in transportation/navigation systems, since a good heuristic function can be the distance between places (nodes) and the destination (destination node). More generally, any other application with pathfinding with some sort distances (like in video games). 
+
 \end{itemize}
 
 
