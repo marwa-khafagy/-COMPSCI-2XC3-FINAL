@@ -4,7 +4,7 @@ import min_heap
 # A* : G x s x d x h -> (pred: DICT , path : FLOAT)
 
 def a_star(G, source, dest, h):
-    pred = {} #Predecessor dictionary. Isn't returned, but here for your understanding
+    pred = {} #Predecessor dictionary
     dist = {} #Distance dictionary
     Q = min_heap.MinHeap([])
     nodes = list(G.adj.keys())
