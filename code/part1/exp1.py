@@ -211,16 +211,17 @@ if (__name__ == "__main__"):
     # Test 1
     #
     
-    # test1_d(50, 0, 100, range(50 + 1))
-    # test1_bf(25, 0, 100, range(1, 25 + 1))
-    # test1_bf(25, -100, 100, range(1, 25 + 1))
+    test1_d(50, 0, 100, range(50 + 1))
+    test1_bf(25, 0, 100, range(1, 25 + 1))
+    test1_bf(25, -100, 100, range(1, 25 + 1))
 
+    test1_bf(25, -100, 100, range(1, 1000, 10))
     #
     # Test 4
     #
 
-    test4(50, 0, 100, range(50), 0, 1)
-    test4(50, 0, 100, range(50), 0, 1000)
+    # test4(50, 0, 100, range(50), 0, 1)
+    # test4(50, 0, 100, range(50), 0, 1000)
 
     #
     # Test 5
