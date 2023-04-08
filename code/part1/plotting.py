@@ -12,6 +12,7 @@ class PlotGroup:
 
         self.placelineAtFirstY1 = False
         self.placeVerticalLineAtX = 0
+        self.placeLineAtFirstY0 = 0
         self.placedLine = False;
 
     def add_point(self, x, y):
@@ -28,6 +29,7 @@ class PlotGroup:
 
         #Plot If
         self.plot_vertical_line_after_y1()
+        self.plot_vertical_line_after_y0()
 
 
     def plotlog(self):
@@ -61,6 +63,32 @@ class PlotGroup:
         #Get X
         x=self.xpoints[lastYbiggerthan1]
         plot.axvline(x=x, color = '#BFBFBF', label=f'Always 1 at & after x={x}')
+
+    def plot_vertical_line_after_y0(self):
+
+        #Exit
+        if not self.placeLineAtFirstY0:
+            return
+
+        #Count
+        lastYbiggerthan1 = self.count
+
+        #Find When Y < 1
+        while (lastYbiggerthan1 >= 0):
+            #Found, Exit
+
+            if (self.ypoints[lastYbiggerthan1-1] > 0):
+                break;
+
+            lastYbiggerthan1 -= 1
+
+        #None Found, Therefor Always bigger than 1
+        if lastYbiggerthan1 <= 0 or lastYbiggerthan1 == self.count:
+            return
+        
+        #Get X
+        x=self.xpoints[lastYbiggerthan1]
+        plot.axvline(x=x, color = '#BFBFBF', label=f'Always 0 at & after x={x}')
 
     def export(self):
         strr = f"{self.label}: " + "{"

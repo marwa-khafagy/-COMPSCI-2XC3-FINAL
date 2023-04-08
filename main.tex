@@ -82,12 +82,196 @@
 \listoffigures
 \newpage
 
+
 %% ------------------------------------------------------------------------------------------ %%
 
 \section{Part 1}
+
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+
 \subsection{Shortest Path Approximations}
+
+
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+
 \subsection{Experiment Suite 1}
-\subsection{Mystery Algorithm}
+
+We define 3 tests to see the difference between Dijkstra's Algorithm and the Bellman-Ford Algorithm.
+
+%% ------------------------------------------------------------------------------------------ %%
+
+\subsubsection{Test 1}
+
+Our first Test, named $test1$ in our python file, tests the accuracy of the total distance in the all pairs approximation vs real algorithm, based on the number of relaxations.
+
+$test1$ is defined as follows
+\begin{itemize}
+    \item $nodeCount$, a constant degree for our graph.
+    \item $upperWeight$, the maximum weight a node can have.
+    \item $relaxationRange$, A range of relaxations to perform.
+    \item $realFunc$, either Bellman-Ford or Dijkstra.
+    \item $approxFunc$, either the Bellman-Ford or Dijkstra approximation function.
+\end{itemize}
+
+It behaves as follows:
+\begin{itemize}
+    \item We create a random complete graph.
+    \item We iterate over a range of relaxation values.
+    \item We iterate over each node in the graph.
+    \item We keep track of the distance found by running the real algorithm, and the distance found by running the approximation algorithm with $k$ relaxations.
+    \item We sum these distances over each node.
+    \item We then repeat for each $k$ in our relaxation range, plotting $k$ vs the accuracy of total distances, defined as the absolute difference of $k$ and $k'$, where $k$ is the total distance found in the actual algorithm, and $k'$ is the distance found by the approximation function.
+\end{itemize}
+
+The implication of $abs(k - k')$ is that if the approximation matches the actual function, we would get a y value of 0.
+
+We run our $test1$ three times.
+
+Our first instance of $test1$ performs the comparison of Dijkstra vs Dijkstra's Approximation on Graphs of Size 50. The weights can be from anywhere between 0 and 100. Our $relaxationRange$ is from 0 to 50.
+
+Next, we compare of BF vs BF's Approximation on Graphs of Size 25. The weights can be from anywhere between 0 and 100. Our $relaxationRange$ is from 0 to 26.
+
+Next, we compare of BF vs BF's Approximation on Graphs of Size 25. The weights can be from anywhere between -100 and 100. Our $relaxationRange$ is from 0 to 26.
+
+\subsubsection{Test 1 - Results}
+
+\figureInsetScaled{images/part1/exp1_1a.png}{Dijkstra vs Dijkstra's Approximation}{0.5}
+\figureInsetScaled{images/part1/exp1_1b.png}{Bellman-Ford vs Bellman-Ford's Approximation}{0.5}
+\figureInsetScaled{images/part1/exp1_1c.png}{Bellman-Ford vs Bellman-Ford's Approximation w/ Negative Edge Weights}{0.5}
+
+TODO: Write Stuff
+
+%% ------------------------------------------------------------------------------------------ %%
+
+\subsubsection{Test 2}
+
+Our second test is named $test4$ in our python file. It tests the accuracy of the approximation functions' total distances from some single starting node. This is effectively a dialed back test1, but this is a more `real' example of how BF and Dijkstra are used.
+
+$test4$ is defined as follows
+\begin{itemize}
+    \item $nodeCount$, a constant node count for the size of our Graph.
+    \item $lowerWeight$, the lower bound for a possible edge weight.
+    \item $upperWeight$, the upper bound for a possible edge weight.
+    \item $relaxationRange$, the range of relaxations.
+    \item $startingNode$, the node at which we start.
+    \item $trials$, the number of trials per relaxation amount.
+\end{itemize}
+
+As the graphs are randomly generated, we perform a number of trails per relaxation to get a good feel for the distance. As the graph is the same for each run of the algorithms, the approximation will average to the same degree as the actual algorithm. 
+
+A consequence of our randomly generated graphs is that the starting node doesn't really matter, assuming our generation function is correct.
+
+While this may reduce the precision of the test, we increase our overall accuracy for the purpose of the test.
+
+$test4$ behaves as follows:
+\begin{itemize}
+    \item Iterate over our Relaxation Range.
+    \item Initialize our distance variables to 0.
+    \item Repeat $x$ times, generate a new graph and run each algorithm on it, using $k$ relaxations for the approximation functions. Our source node for all algorithms is defined.
+    \item Average each distance over the $x$ trials.
+    \item Plot the absolute difference in total\_distance.
+\end{itemize}
+
+
+Our concrete running of our $test4$ has these parmeters.
+
+
+\subsubsection{Test 2 - Results}
+
+Note that in cases where our edge weights can be negative, we still run Dijkstra's. In this case, we are seeing how accurate the approximation is to the (incorrect) real algorithm.1 We don't violate some hidden law.
+
+%% ------------------------------------------------------------------------------------------ %%
+
+\subsubsection{Test 3}
+
+Our third test is named $test5$ in our python file. the accuracy of Dijkstra as nodes increase, but we keep the number of relaxations constant.
+
+$test5$ is defined as follows
+\begin{itemize}
+ \item $nodeRange$, a range of nodes.
+ \item $upperWeight$, an upper range for our edge weights.
+ \item $constantRelaxations$, a set of values for the number of relaxations for our approximation function.
+ \item $startingNode$,  a starting node.
+ \item $trials$, a constant trial count.
+\end{itemize}
+
+It behaves as follows:
+\begin{itemize}
+    \item Generate a complete graph.
+    \item Perform the approximation algorithm, for each value in the set of relaxation number. Get the total distance
+    \item Get the total dist of the real Dijkstra's algorithm on the same graph.
+    \item Average each of these sums over 10 trials.
+    \item Do this for each $n$ in our range of nodes.
+\end{itemize}
+
+\subsubsection{Test 3 - Results}
+
+
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+
+
+
+\subsection{Mystery Algorithm - Two Functions}
+
+As stated, when we run a single source algorithm we end up solving for all the pairs that include that source. Thus, to solve the all-pairs problem, we should run it on all of our nodes (a `potential source').
+
+Thus, if correctness is our only concern, the simplest approach would be running Dijkstra on Positive edge weighted graphs and Bellman-Ford on Negative Weighted Graphs,
+on each node of the graph we are given.
+
+Thus solving for the time complexities of our two new algorithms will be based on the time complexities of Dijkstra and Bellman-Ford respectively.
+
+As our new algorithms run our source algorithms on every node of the graph, our new time complexities are multiplied by the number of nodes in the graph, $V$.
+
+Thus, our All-Pairs Dijkstra Algorithm, on dense graphs, will have time complexity $\Theta(V^3)$, as we perform a $\Theta(V^2)$ process $V$ times.
+
+Similarly, our All-Pairs Bellman-Ford Algorithm, on dense graphs, will have time complexity $\Theta(V^4)$, as we perform a $\Theta(V^3)$ process $V$ times.
+
+\subsection{Mystery Algorithm - Mystery}
+
+First, we look at the $mystery()$ function to get a better understanding of how it works.
+
+We see that it calls the auxiliary $init\_d()$ function. This, initializes a 2D list, or a table, populating each position as infinity. The dimensions of the table are $n \times n$, where $n$ is the number of nodes found in the graph we are searching.
+
+Then we go across the table and set the value of any connections in the graph to the weight they are connected by. If node $i$ and $j$ are connected, the $i$th column and $j$th row, (and thus vice versa), will be set to be the distance between $i$ and $j$. Like nodes are initialized as a distance of 0.
+
+Once we have our table, we end up looping over each position in the table. In essence, we are looking at every possible pair of nodes $i$ and $j$. We then use this pair with another node $k$, (which we also loop over).
+
+Thus, we are checking on every possible triplet of nodes $i$, $j$, $k$.
+
+we say if the distance from $i$ to $k$ + $k$ to $j$ is less than what we have stored for the distance between $i$ to $j$, then that means that we can reach $j$ from $i$ in less distance than what we had originally. Thus, we update our dictionary.
+
+Because we do this multiple times for each pair $i,j,k$ we'll end up ensuring that we get the minimum distance for $i$ to $j$, $\forall i, j$.
+
+\subsection{Finding the Time Complexity}
+
+What we also see is that we don't ever loop on the order of the edges in the graph. We do check edges, but only on the order of the number of nodes. In other words, the order of our mystery function is invariant on how many edges the graph has.
+
+Thus, to derive the time complexity of our mystery function, we are going to run it on varying sized graphs.
+
+Because we are going to plot our points on a log / log graph, we first decide what our x axis points will be. Here, we go with powers of two, plus some extra to fill out the graph a little more.
+
+Then, we generate an empty weight graph with $n$ nodes and 0 edges (best case), and time it on the mystery function. Next, we generate random nodes to completely fill the graph and re-time the mystery function again.
+
+We repeat this $k$ times, (here $k$ = 5) so that we average the results (CPU usage / other processes may affect time, so we want to reduce this as a variable).
+
+Having both an empty graph and a filled graph gets us both our best and worst cases.
+
+We also plot the line of $x^3$ and $x^2$ on our log/log graph. This is an intuition based on how the code works, but it is only an intuition. They will, however, give us a benchmark to see the complexity of the mystery algorithm.
+
+Now, running our experiment, we get the following results.
+
+\figureInsetScaled{images/part1/mystery_real.png}{Real Graph of Graph Size vs Time}{0.5}
+\figureInsetScaled{images/part1/mystery_graph.png}{Log Graph of Graph Size vs Time}{0.5}
+
+ On a Log/Log graph, the slope of a linear line is the degree of the polynomial, and what we can see is that our function, in both best and worst case, match the slope of $x^3$ as $x$ goes to infinity. In this case, $x$ is our node count, or $V$; meaning that we can conclude that our mystery function is on the order of $\Theta(V^3)$.
+
+We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual results unviewable.
 
 \newpage
 \section{Part 2}

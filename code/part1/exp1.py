@@ -1,10 +1,10 @@
-from source.final_project_part1 import bellman_ford, dijkstra
-from source.final_project_part1 import create_random_complete_graph, total_dist
+import random
+from source.final_project_part1 import bellman_ford, dijkstra, total_dist
 from shortest_path_approx import bellman_ford_approx, dijkstra_approx
 from plotting import PlotGroup
 import shortest_path_approx
 import matplotlib.pyplot as plot
-import source.final_project_part1
+import source.final_project_part1 as fpp1
 
 #experiment ideas
 
@@ -16,6 +16,17 @@ import source.final_project_part1
     #5. see if less runtime if less relaxations?
 
 
+def create_random_complete_graph(n,lower,upper):
+    G = fpp1.DirectedWeightedGraph()
+
+    for i in range(n):
+        G.add_node(i)
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                G.add_edge(i,j,random.randint(lower,upper))
+    return G
+
 #
 # ===================================================================================
 #
@@ -24,17 +35,19 @@ import source.final_project_part1
 #   the accuracy of the total_dist as the number of k increases, from EVERY node?
 
 #On Dijkstas
-def test1_d(nodeCount, upperWeight, relaxationRange):
-    return test1(nodeCount, upperWeight, relaxationRange, dijkstra, dijkstra_approx, "Dijkstra")
+def test1_d(nodeCount, lowerWeight, upperWeight, relaxationRange):
+    return test1(nodeCount, lowerWeight, upperWeight, relaxationRange, dijkstra, dijkstra_approx, "Dijkstra")
 
-def test1_bf(nodeCount, upperWeight, relaxationRange):
-    return test1(nodeCount, upperWeight, relaxationRange, bellman_ford, bellman_ford_approx, "Bellman Ford")
+def test1_bf(nodeCount, lowerWeight, upperWeight, relaxationRange):
+    return test1(nodeCount, lowerWeight, upperWeight, relaxationRange, bellman_ford, bellman_ford_approx, "Bellman Ford")
 
-def test1(nodeCount, upperWeight, relaxationRange, realfunc, approxfunc, alg="Unknown"):
+def test1(nodeCount, lowerWeight, upperWeight, relaxationRange, realfunc, approxfunc, alg="Unknown"):
     
     aplot = PlotGroup(f"{alg} Approximation Accuracy")
+    aplot.placeLineAtFirstY0 = True
+
     #Generate Graph, 
-    G = create_random_complete_graph(nodeCount, upperWeight)
+    G = create_random_complete_graph(nodeCount, lowerWeight, upperWeight)
 
     for relaxAmount in relaxationRange:
 
@@ -48,7 +61,7 @@ def test1(nodeCount, upperWeight, relaxationRange, realfunc, approxfunc, alg="Un
             actualDist += total_dist(realfunc(G, source))
             approxDist += total_dist(approxfunc(G, source, relaxAmount))
 
-        accuracy = actualDist / approxDist 
+        accuracy = abs(actualDist - approxDist)
         aplot.add_point(relaxAmount, accuracy);
 
     #Setup
@@ -56,8 +69,9 @@ def test1(nodeCount, upperWeight, relaxationRange, realfunc, approxfunc, alg="Un
     plot.xlabel(f"Number of Relaxations in the Approximation Function")
     plot.ylabel("Accuracy of Approximate Distance to Total Distance")
     
-    plot.legend()
     aplot.plot()
+
+    plot.legend()
     plot.show()
 
 
@@ -66,36 +80,39 @@ def test1(nodeCount, upperWeight, relaxationRange, realfunc, approxfunc, alg="Un
 
 #
 #As relaxations increase, how does the accuracy fair from some single starting node?
-def test4(nodeCount, upperWeight, relaxationRange, startingNode):
+def test4(nodeCount, lowerWeight, upperWeight, relaxationRange, startingNode, trials):
 
-    
     dplot = PlotGroup(f"Dijkstra Approximation Accuracy")
     bfplot = PlotGroup(f"Bellmand Ford Approximation Accuracy")
-
-    #Generate Graph, 
-    G = create_random_complete_graph(nodeCount, upperWeight)
 
     for relaxAmount in relaxationRange:
 
         print(f"Starting k={relaxAmount}")
-        
-        #Define Accuracy
+
         dActualDist = 0
         dApproxDist = 0
-
         bfActualDist = 0
         bfApproxDist = 0
-       
-       #Check from Each Node
-        dActualDist += total_dist(dijkstra(G, startingNode))
-        dApproxDist += total_dist(dijkstra_approx(G, startingNode, relaxAmount))
 
-        bfActualDist += total_dist(bellman_ford(G, startingNode))
-        bfApproxDist += total_dist(bellman_ford_approx(G, startingNode, relaxAmount))
+        for _ in range(trials):
+            
+            #Generate Graph, 
+            G = create_random_complete_graph(nodeCount, lowerWeight, upperWeight)
+
+            dActualDist = total_dist(dijkstra(G, startingNode))
+            dApproxDist = total_dist(dijkstra_approx(G, startingNode, relaxAmount))
+
+            bfActualDist = total_dist(bellman_ford(G, startingNode))
+            bfApproxDist = total_dist(bellman_ford_approx(G, startingNode, relaxAmount))
+
+        dActualDist /= trials
+        dApproxDist /= trials
+        bfActualDist /= trials
+        bfApproxDist /= trials
 
         #Plot
-        dplot.add_point(relaxAmount, dActualDist / dApproxDist);
-        bfplot.add_point(relaxAmount, bfActualDist / bfApproxDist);
+        dplot.add_point(relaxAmount, abs(dActualDist - dApproxDist));
+        bfplot.add_point(relaxAmount, abs(bfActualDist - bfApproxDist));
 
        
     dplot.plot()
@@ -177,30 +194,21 @@ if (__name__ == "__main__"):
     # Test 1
     #
     
-    #test1_d(50, 100, range(50 + 1))
-    # test1_bf(25, 100, range(1, 25 + 1))
-
-    #
-    # Test 2
-    #
-
-
-    #
-    # Test 3
-    #
-
+    # test1_d(50, 0, 100, range(50 + 1))
+    # test1_bf(25, 0, 100, range(1, 25 + 1))
+    # test1_bf(25, -100, 100, range(1, 25 + 1))
 
     #
     # Test 4
     #
 
-    # test4(50, 100, range(20 + 1), 0)
-    # test4(50, 100, range(20 + 1), 25)
+    test4(50, 0, 100, range(50), 0, 1)
+    test4(50, 0, 100, range(50), 0, 1000)
 
     #
     # Test 5
     #
-    test5(range(10, 100, 10), 100, [1, 10, 20, 50, 100], 0, 1000)
+    # test5(range(10, 100, 10), 100, [1, 10, 20, 50, 100], 0, 1000)
 
 
     #End

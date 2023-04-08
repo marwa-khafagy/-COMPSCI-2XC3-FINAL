@@ -91,7 +91,7 @@ def determiningTimeComplexity(k = 5):
         emptyPlot.add_point(n, emptyTime / k)
         densePlot.add_point(n, denseTime / k)
         xthree.add_point(n, n**3)
-        xthree.add_point(n, n**2)
+        xtwo.add_point(n, n**2)
 
         print(f'Plotted n={n}')
 
@@ -112,7 +112,7 @@ def determiningTimeComplexity(k = 5):
     plt.title("Time to Compute Mystery Function vs Weighted Edge Node Count")
     emptyPlot.plot()
     densePlot.plot()
-    
+
     plt.xlabel("Size of Graph")
     plt.xlabel("Time To Perform Mystery Function")
     plt.legend()
