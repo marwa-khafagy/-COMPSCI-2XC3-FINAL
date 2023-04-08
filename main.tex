@@ -277,6 +277,13 @@ We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual r
 \section{Part 2}
 \subsection{A$^{*}$ Implementation}
     See (file)'s $a\_star()$ method.
+\subsubsection{How the algorithm works}
+    \begin{itemize}
+        \item The algorthm is provided all of the same input as Dijkstra, with an additional input that is referred to as a heuristic function
+        \item The heuristic function is a dictionary which takes an edge and returns a number. This number acts as a guide as to not let the algorithm go down "bad" paths. 
+        \item With this new heuristic function, the nodes in the queue are now ordered by their distance from the source plus the numerical value the heuristic function returns (for that spesific node). 
+        \item However, this heuristic function does not affect the actual cost/distance between any two nodes (i.e. the cost is perserved). Thus, when directly comparing costs to find the shortest path, the heuristic function is not considered.
+    \end{itemize}
     
 \subsection{A$^{*}$ Discussion}
 \begin{itemize}
