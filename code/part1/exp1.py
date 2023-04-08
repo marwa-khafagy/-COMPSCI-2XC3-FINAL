@@ -8,7 +8,7 @@ import source.final_project_part1 as fpp1
 import os
 
 saveFileDir = "./images/part1/"
-token = 0
+
 saveFigures = True
 showFigures = False
 
@@ -161,9 +161,9 @@ def test4(nodeCount, lowerWeight, upperWeight, relaxationRange, startingNode, tr
     bfplot.plot()
 
     #Setup
-    plot.title(f"Comparing Accuracies of total distances between Approximation Algorithms with x allowed relaxations from Starting Node {startingNode}")
-    plot.xlabel(f"Number of Relaxations in the Approximation Function")
-    plot.ylabel("Accuracy of Approximate Distance to Total Distance")    
+    plot.title(f"Difference of Total Distance between Approximation Algorithms on {nodeCount} Noded Graphs ({trials} Trials)")
+    plot.xlabel("Number of Relaxations in the Approximation Function")
+    plot.ylabel("Difference in Total Distance Algorithm vs Approximation")    
     plot.legend()
 
     finish_figure(f'exp1_4{token}.png')
@@ -184,8 +184,8 @@ def test5(nodeRange, upperWeight, constantRelaxations, startingNode, trials, tok
     approxPlots = []
 
     for relaxation in constantRelaxations:
-        approxPlots.append(PlotGroup(f"Dijkstra Approximation {constantRelaxations} Relaxations Total Distance"))
-    realPlot = PlotGroup(f"Dijkstra Total Distance")
+        approxPlots.append(PlotGroup(f"{relaxation} Relaxations"))
+    realPlot = PlotGroup(f"Dijkstra Total Distance", "#000000")
 
     for nodeCount in nodeRange:
 
@@ -200,28 +200,33 @@ def test5(nodeRange, upperWeight, constantRelaxations, startingNode, trials, tok
         for _ in range(trials):
 
             #Generate Graph, 
-            G = create_random_complete_graph(nodeCount, upperWeight)
+            G = create_random_complete_graph(nodeCount, 1, upperWeight)
 
             for i in range(len(constantRelaxations)):
-                approxDists[i] += total_dist(dijkstra_approx(G, startingNode, constantRelaxations[i]))
+                relax = constantRelaxations[i];
+                approxDists[i] += total_dist(dijkstra_approx(G, startingNode, relax))
 
             realDist += total_dist(dijkstra(G, startingNode))
 
         # Average
         for i in range(len(constantRelaxations)):
-            approxPlots[i].add_point(nodeCount, approxDists[i] / trials)
+            plotGroup = approxPlots[i]
+            curDistance = approxDists[i]
+            plotGroup.add_point(nodeCount, curDistance / trials)
 
         realPlot.add_point(nodeCount, realDist / trials)
 
     #Plot All
-    for i in range(len(constantRelaxations)):
-        approxPlots[i].plot()
-    realPlot.plot()
+    for plott in approxPlots:
+        plott.plot()
+        print(plott)
+
+    realPlot.plot() 
 
     #Setup
-    plot.title(f"Average Total Distance of {trials} Trials of Dijkstra vs Dijkstra Approximation with constant {constantRelaxations} Relaxations")
+    plot.title(f"Dijkstra vs Dijkstra Approximations Total Distance vs Graph Node Count")
     plot.xlabel(f"Number of Nodes in graph G")
-    plot.ylabel("Total Distance of graph")    
+    plot.ylabel("Total Distance of Graph")    
     plot.legend()
 
     finish_figure(f'exp1_5{token}.png')
@@ -235,7 +240,6 @@ def test5(nodeRange, upperWeight, constantRelaxations, startingNode, trials, tok
 if (__name__ == "__main__"):
 
     #Run Tests
-
     token = 0
 
     #
@@ -249,14 +253,14 @@ if (__name__ == "__main__"):
     #
     # Test 4
     #
-    test4(50, 0, 100, range(50), 0, 1, 'a')
-    test4(50, 0, 100, range(50), 0, 1000, 'b')
+    # test4(25, 0, 100, range(2, 50), 0, 100, 'a')
 
     #
     # Test 5
     #
-    test5(range(10, 100, 10), 100, [1, 10, 20, 50, 100], 0, 1000, 'a')
-
+    # test5(range(10, 600, 40), 100, [1, 2, 4, 6, 8], 0, 10, 'a')
+    # test5(range(2, 61), 100, [1, 2, 4, 6, 8], 0, 10, 'b')
+    # test5(range(1000, 10011, 2), 5, [7, 8, 9, 10], 0, 1, 'c')
 
     #End
     pass

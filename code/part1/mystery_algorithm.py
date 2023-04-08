@@ -4,6 +4,18 @@ from plotting import PlotGroup # You have to open the code file in VSCode, not o
 import source.final_project_part1 as fp1
 import random
 
+
+saveFigures = True
+saveFileDir = "./images/part1/"
+
+def finish_figure(saveLocation):
+
+    if saveFigures:
+        print("Saving Figure to " + saveLocation)
+        plt.savefig(saveFileDir + saveLocation, bbox_inches='tight')
+
+    plt.show()
+
 #
 # Generate Small Graphs
 #
@@ -97,7 +109,6 @@ def determiningTimeComplexity(k = 5):
 
     #
     # Graph
-
     plt.title("Time to Compute Mystery Function vs Weighted Edge Node Count (Log Graph)")
     emptyPlot.plotlog()
     densePlot.plotlog()
@@ -107,7 +118,12 @@ def determiningTimeComplexity(k = 5):
     plt.xlabel("Size of Graph")
     plt.xlabel("Time To Perform Mystery Function")
     plt.legend()
-    plt.show()
+    
+    finish_figure("mysteryLog.png")
+
+    #
+    # Graph Again
+    #
 
     plt.title("Time to Compute Mystery Function vs Weighted Edge Node Count")
     emptyPlot.plot()
@@ -116,24 +132,13 @@ def determiningTimeComplexity(k = 5):
     plt.xlabel("Size of Graph")
     plt.xlabel("Time To Perform Mystery Function")
     plt.legend()
-    plt.show()
 
-    export_findings("mysteryOut.txt", (emptyPlot, densePlot, xthree))
+    finish_figure("mysteryReal.png")
 
-def export_findings(fname, plots):
-
-    strr = ""
-
-    with open(fname, "w") as f:
-        for plot in plots:
-            strr += plot.export()
-
-        f.write(strr)
 #
 #
 #
 if (__name__ == '__main__'):
 
     #testing()
-
     determiningTimeComplexity()
