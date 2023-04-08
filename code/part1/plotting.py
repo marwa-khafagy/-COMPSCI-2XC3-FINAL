@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plot
+import re
 
 class PlotGroup:
 
@@ -60,3 +61,60 @@ class PlotGroup:
         #Get X
         x=self.xpoints[lastYbiggerthan1]
         plot.axvline(x=x, color = '#BFBFBF', label=f'Always 1 at & after x={x}')
+
+    def export(self):
+        strr = f"{self.label}: " + "{"
+
+        for i in range(self.count):
+            x = self.xpoints[i]
+            y = self.ypoints[i]
+
+            strr += f'({x}, {y}), '
+
+        return strr + "}\n"
+    
+    def __str__(self) -> str:
+        return self.export()
+
+def import_plotgroups(filename):
+    lines = []
+    with open(filename, 'r') as f:
+        lines = f.readlines();
+
+    plotGroups = []
+    for line in lines:
+
+        result = re.search('(.*): \{(.*)\}', line)
+
+        if result:
+
+            groups = result.groups()
+
+            # New Plot Group, Name
+            g = PlotGroup(groups[0])
+
+            tuples = groups[1];
+
+            while (True):
+
+                regex = r"(\([\d,\. e-]*\))"
+                result2 = re.match(regex, tuples)
+
+                if (result2 is None):
+                    break;
+
+                point = result2.groups()
+
+                pointstr = point[0]
+                point = pointstr.replace('(', '').replace(')', '').split(', ')
+                tup = tuple(point)
+
+                g.add_point(tup[0], tup[1])
+
+                tuples = tuples.replace(pointstr + ', ', '')
+
+
+
+            plotGroups.append(g)
+
+    return plotGroups
