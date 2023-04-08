@@ -44,6 +44,10 @@ def test1_bf(nodeCount, lowerWeight, upperWeight, relaxationRange):
 def test1(nodeCount, lowerWeight, upperWeight, relaxationRange, realfunc, approxfunc, alg="Unknown"):
     
     aplot = PlotGroup(f"{alg} Approximation Accuracy")
+
+    realPlot = PlotGroup(f"{alg} Algorithm Total Distance")
+    approxPlot = PlotGroup(f"{alg} Approximation Total Distance")
+
     aplot.placeLineAtFirstY0 = True
 
     #Generate Graph, 
@@ -64,12 +68,25 @@ def test1(nodeCount, lowerWeight, upperWeight, relaxationRange, realfunc, approx
         accuracy = abs(actualDist - approxDist)
         aplot.add_point(relaxAmount, accuracy);
 
+        realPlot.add_point(relaxAmount, actualDist);
+        approxPlot.add_point(relaxAmount, approxDist);
+
     #Setup
     plot.title(f"Accuracy of the Total Distance of {alg} Real vs {alg} Approx with x relaxations")
     plot.xlabel(f"Number of Relaxations in the Approximation Function")
     plot.ylabel("Accuracy of Approximate Distance to Total Distance")
     
     aplot.plot()
+
+    plot.legend()
+    plot.show()
+
+    plot.title(f"Real Total Distance of {alg} Real vs {alg} Approx with X relaxations")
+    plot.xlabel(f"Number of Relaxations in the Approximation Function")
+    plot.ylabel("Accuracy of Approximate Distance to Total Distance")
+    
+    realPlot.plot()
+    approxPlot.plot()
 
     plot.legend()
     plot.show()
