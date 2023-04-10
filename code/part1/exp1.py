@@ -233,6 +233,67 @@ def test5(nodeRange, upperWeight, constantRelaxations, startingNode, trials, tok
 
     pass
 
+# --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
+
+def test6(nodeCount, upperWeights, constantRelaxations, startingNode, trials, token):
+
+    print(f'Starting Test 5{token}...')
+
+    approxPlots = []
+
+    for relaxation in constantRelaxations:
+        approxPlots.append(PlotGroup(f"{relaxation} Relaxations"))
+    realPlot = PlotGroup(f"Dijkstra Total Distance", "#000000")
+
+    for upperWeight in upperWeights:
+
+        print(upperWeight)
+
+        approxDists = []
+        for relaxation in constantRelaxations:
+            approxDists.append(0)
+
+        realDist = 0
+
+        for _ in range(trials):
+
+            #Generate Graph, 
+            G = create_random_complete_graph(nodeCount, 1, upperWeight)
+
+            for i in range(len(constantRelaxations)):
+                relax = constantRelaxations[i];
+                approxDists[i] += total_dist(dijkstra_approx(G, startingNode, relax))
+
+            realDist += total_dist(dijkstra(G, startingNode))
+
+        # Average
+        for i in range(len(constantRelaxations)):
+            plotGroup = approxPlots[i]
+            curDistance = approxDists[i]
+            plotGroup.add_point(upperWeight, curDistance / trials)
+
+        realPlot.add_point(upperWeight, realDist / trials)
+
+    #Plot All
+    for plott in approxPlots:
+        plott.plot()
+        print(plott)
+
+    realPlot.plot() 
+
+    #Setup
+    plot.title(f"Dijkstra Approximations Total Distance on Random Graph n={nodeCount} vs Edge Weight Max Value ({trials} Trials)")
+    plot.xlabel(f"Maximum Edge Weight (Edge Range [1..x])")
+    plot.ylabel("Total Distance of Graph")    
+    plot.legend()
+
+    finish_figure(f'exp1_6{token}.png')
+
+    pass
+
 #
 # ===================================================================================
 #
@@ -260,7 +321,13 @@ if (__name__ == "__main__"):
     #
     # test5(range(10, 600, 40), 100, [1, 2, 4, 6, 8], 0, 10, 'a')
     # test5(range(2, 61), 100, [1, 2, 4, 6, 8], 0, 10, 'b')
-    test5(range(1000, 1011, 2), 100, [1, 2, 4, 6, 8, 10], 0, 1, 'c')
+    # test5(range(1000, 1011, 2), 100, [1, 2, 4, 6, 8, 10], 0, 1, 'c')
+    
+    #
+    #Test 6
+    test6(10, range(1, 1000, 10), [1, 2, 4, 6, 8, 10], 0, 500, 'a')
+    test6(50, range(1, 1000, 10), [1, 2, 4, 6, 8, 10], 0, 500, 'b')
+    test6(100, range(1, 5000, 100), [1, 2, 4, 6, 8, 10], 0, 10, 'c')
 
     #End
     pass
