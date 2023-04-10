@@ -1,10 +1,19 @@
 import min_heap
 from SPAlgorithm import SPAlgorithm
+#from HeuristicGraph import HueristicGraph
 
 
 class A_star(SPAlgorithm):
     
     def calc_sp(self, graph, source, dest):
+        
+        # h = {}
+
+        # if not isinstance(graph, HeuristicGraph):
+        #     for i in range(graph.get_num_of_nodes()):
+        #         h[i] = 0
+        # else:
+        #     h = graph.get_heuristic()
         return self.a_star(graph, source, dest, graph.get_heuristic())
         
     def a_star(self,G, source, dest, h):
