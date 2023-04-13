@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plot
+import re
 
 class PlotGroup:
 
@@ -11,6 +12,7 @@ class PlotGroup:
 
         self.placelineAtFirstY1 = False
         self.placeVerticalLineAtX = 0
+        self.placeLineAtFirstY0 = 0
         self.placedLine = False;
 
     def add_point(self, x, y):
@@ -27,6 +29,7 @@ class PlotGroup:
 
         #Plot If
         self.plot_vertical_line_after_y1()
+        self.plot_vertical_line_after_y0()
 
 
     def plotlog(self):
@@ -60,3 +63,86 @@ class PlotGroup:
         #Get X
         x=self.xpoints[lastYbiggerthan1]
         plot.axvline(x=x, color = '#BFBFBF', label=f'Always 1 at & after x={x}')
+
+    def plot_vertical_line_after_y0(self):
+
+        #Exit
+        if not self.placeLineAtFirstY0:
+            return
+
+        #Count
+        lastYbiggerthan1 = self.count
+
+        #Find When Y < 1
+        while (lastYbiggerthan1 >= 0):
+            #Found, Exit
+
+            if (self.ypoints[lastYbiggerthan1-1] > 0):
+                break;
+
+            lastYbiggerthan1 -= 1
+
+        #None Found, Therefor Always bigger than 1
+        if lastYbiggerthan1 <= 0 or lastYbiggerthan1 == self.count:
+            return
+        
+        #Get X
+        x=self.xpoints[lastYbiggerthan1]
+        plot.axvline(x=x, color = '#BFBFBF', label=f'Always 0 at & after x={x}')
+
+    def export(self):
+        strr = f"{self.label}: " + "{"
+
+        for i in range(self.count):
+            x = self.xpoints[i]
+            y = self.ypoints[i]
+
+            strr += f'({x}, {y}), '
+
+        return strr + "}\n"
+    
+    def __str__(self) -> str:
+        return self.export()
+
+def import_plotgroups(filename):
+    lines = []
+    with open(filename, 'r') as f:
+        lines = f.readlines();
+
+    plotGroups = []
+    for line in lines:
+
+        result = re.search('(.*): \{(.*)\}', line)
+
+        if result:
+
+            groups = result.groups()
+
+            # New Plot Group, Name
+            g = PlotGroup(groups[0])
+
+            tuples = groups[1];
+
+            while (True):
+
+                regex = r"(\([\d,\. e-]*\))"
+                result2 = re.match(regex, tuples)
+
+                if (result2 is None):
+                    break;
+
+                point = result2.groups()
+
+                pointstr = point[0]
+                point = pointstr.replace('(', '').replace(')', '').split(', ')
+                tup = tuple(point)
+
+                g.add_point(tup[0], tup[1])
+
+                tuples = tuples.replace(pointstr + ', ', '')
+
+
+
+            plotGroups.append(g)
+
+    return plotGroups

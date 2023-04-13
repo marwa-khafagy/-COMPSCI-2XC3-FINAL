@@ -66,6 +66,28 @@
 }
 
 %% ------------------------------------------------------------------------------------------ %%
+
+
+%Image, Default Scaling
+\newcommand{\expOneTestOneFigure}[2]
+{
+    \begin{figure}[ht!]
+        \begin{subfigure}[t]{.48\textwidth}
+            \centering
+            \includegraphics[width=1\textwidth]{#1B.png}
+            \caption{Real Total Distance}
+        \end{subfigure}\hfill
+        \begin{subfigure}[t]{.48\textwidth}
+            \centering
+            \includegraphics[width=1\textwidth]{#1A.png}
+            \caption{Difference in Total Distance}
+        \end{subfigure}
+    \caption{#2}
+    \end{figure}
+}
+
+
+%% ------------------------------------------------------------------------------------------ %%
 %% ------------------------------------------------------------------------------------------ %%
 %% ------------------------------------------------------------------------------------------ %%
 
@@ -85,24 +107,338 @@
 %% ------------------------------------------------------------------------------------------ %%
 
 \section{Part 1}
+
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+
 \subsection{Shortest Path Approximations}
+
+We write the shortest path approximation functions by adding a relaxation dictionary, which counts the number of times each node can be relaxed. This means that our approximation functions limit the number of times we can relax a node.
+
+This is useful to see because we can then increase the number of relaxations to see how many times the actual algorithm relaxes each node. If our approximation returns the same result, then the real algorithm relaxed at least one of its nodes, at maximum, the value of $k$ in our approximation.
+
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+
 \subsection{Experiment Suite 1}
-\subsection{Mystery Algorithm}
+
+We define 4 tests to see the difference between Dijkstra's Algorithm and the Bellman-Ford Algorithm.
+
+%% ------------------------------------------------------------------------------------------ %%
+
+\subsubsection{Test 1}
+
+Our first Test, named $test1$ in our python file, tests the accuracy of the total distance in the all pairs approximation vs real algorithm, based on the number of relaxations.
+
+$test1$ is defined as follows
+\begin{itemize}
+    \item $nodeCount$, a constant degree for our graph.
+    \item $upperWeight$, the maximum weight a node can have.
+    \item $relaxationRange$, A range of relaxations to perform.
+    \item $realFunc$, either Bellman-Ford or Dijkstra.
+    \item $approxFunc$, either the Bellman-Ford or Dijkstra approximation function.
+\end{itemize}
+
+It behaves as follows:
+\begin{itemize}
+    \item We create a random complete graph.
+    \item We iterate over a range of relaxation values.
+    \item We iterate over each node in the graph.
+    \item We keep track of the distance found by running the real algorithm, and the distance found by running the approximation algorithm with $k$ relaxations.
+    \item We sum these distances over each node.
+    \item We then repeat for each $k$ in our relaxation range, plotting $k$ vs the accuracy of total distances, defined as the absolute difference of $k$ and $k'$, where $k$ is the total distance found in the actual algorithm, and $k'$ is the distance found by the approximation function.
+    \item We plot on a separate graphs the actual values for distance we determined.
+\end{itemize}
+
+We get two graphs out of $test1$ per iteration, the real total distance of function vs approximation, and the difference between the two.
+
+The implication of $abs(k - k')$ is that if the approximation matches the actual function, we would get a y value of 0.
+
+We run our $test1$ three times.
+
+Our first instance of $test1$ performs the comparison of Dijkstra vs Dijkstra's Approximation on Graphs of Size 50. The weights can be from anywhere between 1 and 100. Our $relaxationRange$ is from 1 to 50.
+
+Next, we compare of BF vs BF's Approximation on Graphs of Size 25. The weights can be from anywhere between 0 and 100. Our $relaxationRange$ is from 1 to 25. We run this on Graphs of Size 25, because BF on Dense graphs of size 50 is extremely slow.
+
+Next, we compare of BF vs BF's Approximation on Graphs of Size 25. The weights can be from anywhere between -100 and 100. Our $relaxationRange$ is from 1 to 25. We run this on Graphs of Size 25, because BF on Dense graphs of size 50 is extremely slow.
+
+\subsubsection{Test 1 - Results}
+
+\FloatBarrier{}
+\expOneTestOneFigure{images/part1/exp1_1a}{$test1a$: Dijkstra vs Dijkstra's Approximation Total Distance}
+\FloatBarrier{}
+
+In our first result, we see that on a graph with 50 nodes, It only takes 10 approximations for Dijkstra's Approximation to determine the same result as Dijkstra's.
+
+\FloatBarrier{}
+\expOneTestOneFigure{images/part1/exp1_1b}{$test1b$: Bellman-Ford vs Bellman-Ford's Approximation}
+\FloatBarrier{}
+
+In our second test, we see than it also take
+
+\FloatBarrier{}
+\expOneTestOneFigure{images/part1/exp1_1c}{$test1c$: Bellman-Ford vs Bellman-Ford's Approximation w/ Negative Edge Weights}
+\FloatBarrier{}
+
+What we can see here is that the difference is immense. On Graphs with negative edge weights, the approximation fairs far worse than if the graph only contains positive edge weights. However, from the graph we can see that the approximation is slowly approaching the real total distance. 
+Thus, we can determine that a likely cause of this is that when a graph has negative edge weights, BF relaxes its nodes far more than if it doesn't have any negative weights.
+
+Thus, we can rerun this experiment, but with a larger range of relaxations. Obviously, as we are running on a larger range, we omit some x values. Our relaxation range is now 1 through to 1000, skipping every 10.
+
+\FloatBarrier{}
+\expOneTestOneFigure{images/part1/exp1_1d}{Bellman-Ford vs Bellman-Ford's Approximation w/ Negative Edge Weights Extended}
+\FloatBarrier{}
+
+The above graph confirms our suspicion -- on graphs with negative edge weights, we need a lot more relaxations in order for BF approximation to get to the same total distance as the regular BF. In other words, BF relaxes it's nodes a lot more frequently with negative edge weights than it does if it doesn't.
+
+%% ------------------------------------------------------------------------------------------ %%
+\newpage
+\subsubsection{Test 2}
+
+Our second test is named $test4$ in our python file. It tests the accuracy of the approximation functions' total distances from some single starting node. This is effectively a dialed back test1, but this is a more `real' example of how BF and Dijkstra are used.
+
+$test4$ is defined as follows
+\begin{itemize}
+    \item $nodeCount$, a constant node count for the size of our Graph.
+    \item $lowerWeight$, the lower bound for a possible edge weight.
+    \item $upperWeight$, the upper bound for a possible edge weight.
+    \item $relaxationRange$, the range of relaxations.
+    \item $startingNode$, the node at which we start.
+    \item $trials$, the number of trials per relaxation amount.
+\end{itemize}
+
+As the graphs are randomly generated, we perform a number of trails per relaxation to get a good feel for the distance. As the graph is the same for each run of the algorithms, the approximation will average to the same degree as the actual algorithm. 
+
+A consequence of our randomly generated graphs is that the starting node doesn't really matter, assuming our generation function is correct.
+
+While this may reduce the precision of the test, we increase our overall accuracy for the purpose of the test.
+
+$test4$ behaves as follows:
+\begin{itemize}
+    \item Iterate over our Relaxation Range.
+    \item Initialize our distance variables to 0.
+    \item Repeat $x$ times, generate a new graph and run each algorithm on it, using $k$ relaxations for the approximation functions. Our source node for all algorithms is defined.
+    \item Average each distance over the $x$ trials.
+    \item Plot the absolute difference in total\_distance.
+\end{itemize}
+
+Our concrete running of our $test4$ has these parameters.
+
+$test4a$, where we create graphs of size 25, with edge weights between 0 and 100. Our Relaxation Range is between 1 and 50.
+We have a constant starting node (which doesn't really matter) as Node=0. We do 100 trials per data point.
+
+$test4b$, where we create graphs of size 25, with edge weights between -100 and 100. Our Relaxation Range is between 1 and 50.
+We have a constant starting node (which doesn't really matter) as Node=0. We do 10 trials per data point.
+
+We choose $n$=25, because Bellman-Ford takes lots of time with large $n$.
+
+\subsubsection{Test 2 - Results}
+
+Note that in cases where our edge weights can be negative, we still run Dijkstra's. In this case, we are seeing how accurate the approximation is to the (incorrect) real algorithm. We don't violate some hidden law.
+
+\figureInsetScaled{images/part1/exp1_4a.png}{$test4a$: Difference in Total Difference of the Approximation Algorithms on 20 node Graphs}{0.8}
+
+
+
+\figureInsetScaled{images/part1/exp1_4a.png}{$test4b$: Difference in Total Difference of the Approximation Algorithms on 50 node graphs}{0.8}
+
+What we can determine by looking at these results is that.
+
+We have a really large spike on the one trial, but that is most likely a CPU processing one. We don't have spikes like that on the 25 trial run. Strangely, there is an occurrence of a high spike around the same place in the 20 trial one, implying that there may be something about this particular area (when the number of relaxations hits 6) when running Bellman-Ford.
+
+What we see is that as soon as the number of relaxations hits around 10, the approximations match exactly with the real functions.
+
+%% ------------------------------------------------------------------------------------------ %%
+
+\newpage
+\subsubsection{Test 3}
+
+Our third test is named $test5$ in our python file. the accuracy of Dijkstra as nodes increase, but we graph it against the multiple approximations with different relaxation values. These values remain constant.
+
+What this gives us is an estimate as to how many relaxations are required by the Real Dijkstra.
+
+We choose Dijkstra here instead of bellman ford, because we only want to use positive edge weights. If we use negative weights, we necessitate the usage of Bellman-Ford, but what we see in test 4 is that the number of relaxations required by Bellman-Ford with negative weights is significantly higher than BF with positive weights. As Dijkstra runs faster than BF in this case, we choose Dijkstra.
+
+$test5$ is defined as follows
+\begin{itemize}
+ \item $nodeRange$, a range of nodes.
+ \item $upperWeight$, an upper range for our edge weights.
+ \item $constantRelaxations$, a set of values for the number of relaxations for our approximation function.
+ \item $startingNode$,  a starting node.
+ \item $trials$, a constant trial count.
+\end{itemize}
+
+It behaves as follows:
+\begin{itemize}
+    \item Generate a complete graph.
+    \item Perform the approximation algorithm, for each value in the set of relaxation number. Get the total distance
+    \item Get the total dist of the real Dijkstra's algorithm on the same graph.
+    \item Average each of these sums over 10 trials.
+    \item Do this for each $n$ in our range of nodes.
+\end{itemize}
+
+\newpage
+\subsubsection{Test 3 - Results}
+
+\figureInsetScaled{images/part1/exp1_5a.png}{$test5a$: Large Range of Test5}{0.5}
+\figureInsetScaled{images/part1/exp1_5b.png}{$test5b$: Zoomed In Range of Test5, Small Range}{0.5}
+
+These results are not averaged. $test5a$ seems smooth because we end up skipping 40 values of $k$ at a time. In $test5b$ shows that the variance of total distance is very high, which cause the spikes.
+
+It happens that the total distance of the graph itself here has high variation from data point to data point, because we only generate one random graph per data point. However, it is interesting to see that the peaks of the real total distance co-respond to the peaks of the approximation total distance.
+
+We can see this very well by looking at the 8 relaxation line -- it matches the black line perfectly. Even 6 relaxations matches quite well, even at around $n$=60. Thus, we can say that below $n=60$, Dijkstra does at most 8 relaxations per node.
+
+Thus, we can disregard any peaks because the approximation behaves the same way -- it was just the variance from the data sample. The variance is due to the random nature of the edge weights, we can reduce this by lowering the maximum edge weight, reducing the number of possible total distances.
+
+What we can see is that the rate at which the approximation function's distance seems to increase linearly as number of nodes $n$ increases. The rate of change is dependant on the number of relaxations, $k$.
+
+What we can see is that to get a good approximation for Dijkstra, we only really need to have a relaxation amount $k$ proportional to the size of the graph. Or, in other words, Dijkstra only needs to relax each node a few times.
+
+At a very small graph size, $k=1$ is a relatively good approximation. However, as $n$ increases, this approximation falls off very quickly. Thus, we only need to relax each node once.
+
+At some point $k=2$ is also a very good approximation, and it stays good for a lot longer.
+
+We can repeat this for all $k$. If $k$ is high enough, for small enough graphs, the approximation is quite good, or as good as possible.
+
+Of course, the higher $k$ value we choose, the better the approximation, but what we can tell from this graph is that to get a good approximation, the value of $k$ depends on the value of $n$.
+
+\FloatBarrier{}
+\figureInsetScaled{images/part1/exp1_5c.png}{$test5c$: Accuracy of Approximation with large graph at certain $k$ value}{.5}
+\FloatBarrier{}
+
+We see this in our $test5c$. Here, we have a very large graph ($n$ around 1000). We have many values of $k$, but to get a good one we don't really need to do a total Dijkstra's algorithm -- we can approximate it very well with $k$=6 really well, and $k=8$ is already good enough. Again, in other words, Dijkstra will approximately use around 10 relaxations on graphs sized around 1000.
+%% ------------------------------------------------------------------------------------------ %%
+
+\newpage
+\subsubsection{Test 4}
+
+Our fourth test is named $test6$ in our python file. It behaves similarly to test 5, but instead of increasing the node count, we increase the variance of the edge weights. The idea of this test is to see if the range of values the edges can have affects the total distance of the approximation.
+
+We choose Dijkstra here instead of bellman ford, because we only want to use positive edge weights. If we use negative weights, we necessitate the usage of Bellman-Ford, but what we see in test 4 is that the number of relaxations required by Bellman-Ford with negative weights is significantly higher than BF with positive weights. As Dijkstra runs faster than BF in this case, we choose Dijkstra.
+
+$test6$ is defined as follows
+\begin{itemize}
+ \item $nodeCount$, a constant node count to generate our graphs with.
+ \item $upperWeightRange$, an range upper range for our edge weights.
+ \item $constantRelaxations$, a set of values for the number of relaxations for our approximation function.
+ \item $startingNode$, a starting node.
+ \item $trials$, a constant trial count.
+\end{itemize}
+
+It behaves as follows:
+\begin{itemize}
+    \item Generate a complete graph, with weights ranging from 1 to $w$.
+    \item Perform the approximation algorithm, for each value in the set of relaxation number. Get the total distance
+    \item Get the total dist of the real Dijkstra's algorithm on the same graph.
+    \item Average each of these sums over 10 trials.
+    \item Do this for each $w$ in our range of upper weights.
+\end{itemize}
+
+\newpage
+\subsubsection{Test 4 - Results}
+
+\FloatBarrier{}
+\figureInsetScaled{images/part1/exp1_6a.png}{$test6a$: Accuracy of Approximation with small graph, Huge in proportion range}{.5}
+\figureInsetScaled{images/part1/exp1_6b.png}{$test6b$: Accuracy of Approximation with medium graph, Huge in proportion range}{.5}
+\figureInsetScaled{images/part1/exp1_6c.png}{$test6c$: Accuracy of Approximation with large graph, Large range}{.5}
+\FloatBarrier{}
+
+What we can see here is again, the total distance is highly dependant on the range of values the edges can be. If the range is larger, then it makes sense that more relaxations would be required-- the chance that an edge is larger than the sum of two other increases with the larger range, meaning there is a higher chance to relax the node. 
+
+However, just because the chance is higher doesn't mean we need the same amount of relaxations. We see that the disparity between the real and the approximate total distance diverges from one another, but it only takes ~6 relaxations for the approximation to match the real one. This means that as the range of weights increase, the chance for a `problem node' to pop up increases. This problem node starts off with a very high distance, but it needs to have many relaxations to get to its real distance. However, because of our approximation, we have limited the number of relaxations, thus we approximate the distance to be very high.
+
+We see this clearly in $test6a$ - Our maximum edge weight range is 1000, and with one relaxation our total distance is around double the real distance -- meaning we have many problem nodes, where they on average have twice their total distance. 
+
+With more relaxations this value decreases, and eventually settles on the real value.
+
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+%% ------------------------------------------------------------------------------------------ %%
+
+\subsection{Mystery Algorithm - Two Functions}
+
+As stated, when we run a single source algorithm we end up solving for all the pairs that include that source. Thus, to solve the all-pairs problem, we should run it on all of our nodes (a `potential source').
+
+Thus, if correctness is our only concern, the simplest approach would be running Dijkstra on Positive edge weighted graphs and Bellman-Ford on Negative Weighted Graphs,
+on each node of the graph we are given.
+
+Thus solving for the time complexities of our two new algorithms will be based on the time complexities of Dijkstra and Bellman-Ford respectively.
+
+As our new algorithms run our source algorithms on every node of the graph, our new time complexities are multiplied by the number of nodes in the graph, $V$.
+
+Thus, our All-Pairs Dijkstra Algorithm, on dense graphs, will have time complexity $\Theta(V^3)$, as we perform a $\Theta(V^2)$ process $V$ times.
+
+Similarly, our All-Pairs Bellman-Ford Algorithm, on dense graphs, will have time complexity $\Theta(V^4)$, as we perform a $\Theta(V^3)$ process $V$ times.
+
+\subsection{Mystery Algorithm - Mystery}
+
+First, we look at the $mystery()$ function to get a better understanding of how it works.
+
+We see that it calls the auxiliary $init\_d()$ function. This, initializes a 2D list, or a table, populating each position as infinity. The dimensions of the table are $n \times n$, where $n$ is the number of nodes found in the graph we are searching.
+
+Then we go across the table and set the value of any connections in the graph to the weight they are connected by. If node $i$ and $j$ are connected, the $i$th column and $j$th row, (and thus vice versa), will be set to be the distance between $i$ and $j$. Like nodes are initialized as a distance of 0.
+
+Once we have our table, we end up looping over each position in the table. In essence, we are looking at every possible pair of nodes $i$ and $j$. We then use this pair with another node $k$, (which we also loop over).
+
+Thus, we are checking on every possible triplet of nodes $i$, $j$, $k$.
+
+we say if the distance from $i$ to $k$ + $k$ to $j$ is less than what we have stored for the distance between $i$ to $j$, then that means that we can reach $j$ from $i$ in less distance than what we had originally. Thus, we update our dictionary.
+
+Because we do this multiple times for each pair $i,j,k$ we'll end up ensuring that we get the minimum distance for $i$ to $j$, $\forall i, j$.
+
+\subsection{Finding the Time Complexity}
+
+What we also see is that we don't ever loop on the order of the edges in the graph. We do check edges, but only on the order of the number of nodes. In other words, the order of our mystery function is invariant on how many edges the graph has.
+
+Thus, to derive the time complexity of our mystery function, we are going to run it on varying sized graphs.
+
+Because we are going to plot our points on a log / log graph, we first decide what our x axis points will be. Here, we go with powers of two, plus some extra to fill out the graph a little more.
+
+Then, we generate an empty weight graph with $n$ nodes and 0 edges (best case), and time it on the mystery function. Next, we generate random nodes to completely fill the graph and re-time the mystery function again.
+
+We repeat this $k$ times, (here $k$ = 5) so that we average the results (CPU usage / other processes may affect time, so we want to reduce this as a variable).
+
+Having both an empty graph and a filled graph gets us both our best and worst cases.
+
+We also plot the line of $x^3$ and $x^2$ on our log/log graph. This is an intuition based on how the code works, but it is only an intuition. They will, however, give us a benchmark to see the complexity of the mystery algorithm.
+
+Now, running our experiment, we get the following results.
+
+\figureInsetScaled{images/part1/mystery_real.png}{Real Graph of Graph Size vs Time}{0.5}
+\figureInsetScaled{images/part1/mystery_graph.png}{Log Graph of Graph Size vs Time}{0.5}
+
+ On a Log/Log graph, the slope of a linear line is the degree of the polynomial, and what we can see is that our function, in both best and worst case, match the slope of $x^3$ as $x$ goes to infinity. In this case, $x$ is our node count, or $V$; meaning that \textbf{we can conclude that our mystery function is on the order of} $\Theta(V^3)$.
+
+We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual results unviewable.
 
 \newpage
 \section{Part 2}
 \subsection{A$^{*}$ Implementation}
-    See (file)'s $a\_star()$ method.
+    See (a\_star.py)'s $a\_star()$ method.
+\subsubsection{How the algorithm works}
+    \begin{itemize}
+        \item The algorthm is provided all of the same input as Dijkstra, with an additional input that is referred to as a heuristic function
+        \item The heuristic function is a dictionary which takes an edge and returns a number. This number acts as a guide as to not let the algorithm go down "bad" paths. 
+        \item With this new heuristic function, the nodes in the queue are now ordered by their distance from the source plus the numerical value the heuristic function returns (for that spesific node). 
+        \item However, this heuristic function does not affect the actual cost/distance between any two nodes (i.e. the cost is perserved). Thus, when directly comparing costs to find the shortest path, the heuristic function is not considered.
+    \end{itemize}
     
 \subsection{A$^{*}$ Discussion}
 \begin{itemize}
     \item What issues with Dijkstra’s algorithm is A* trying to address?\\
-    The biggest problem with Dijkstra’s algorithm is that it considers all possible paths between nodes, which can lead the algorithm down unideal paths. Thus runtime may be wasted on paths unlikely to lead to the shortest path. 
-    Thus, when working with large graphs, Dijkstra’s algorithm becomes unnecessarily slow. 
+        The biggest problem with Dijkstra’s algorithm is that it considers all possible paths between nodes, which can lead the algorithm down unideal paths. Thus runtime may be wasted on paths unlikely to lead to the shortest path. 
+        Thus, when working with large graphs, Dijkstra’s algorithm becomes unnecessarily slow. 
     \item How would you empirically test Dijkstra’s vs A*?\\
-          To empirically test Dijkstra’s vs A*, we would compare the runtimes of finding the shortest path of graphs of varying sizes/densiy. 
-    \item If you generated an arbitrary heuristic function (similar to randomly generating weights), how would Dijkstra’s algorithm compare to A*?
+        To empirically test Dijkstra’s vs A*, we would compare the runtimes of finding the shortest path of graphs of varying sizes/densiy. 
+    \item If you generated an arbitrary heuristic function (similar to randomly generating weights), how would Dijkstra’s algorithm compare to A*?\\
+        In that case, they may perform similarly, or more likely, Dijkstra’s may outperferm A*. This is because this arbitrary heuristic function could lead the algorithm down even more unideal paths. On the other hand, Dijkstra would be more thorough and would consider all possible paths between nodes. A better heuristic function would estimate the distance between nodes and the destination node. 
     \item What applications would you use A* instead of Dijkstra’s?
+        In general, given a good heuristic function, A* is more efficient than Dijkstra’s algorithm. Thus, it would make sense to use A* in applications where there exists a heuristic function that can lead the algorithm in the right direction. 
+        An example is finding shortest paths in transportation/navigation systems, since a good heuristic function can be the distance between places (nodes) and the destination (destination node). More generally, any other application with pathfinding with some sort distances (like in video games) would perform better with the A* algorithm. 
+
 \end{itemize}
 
 
@@ -121,6 +457,21 @@
 
 \newpage
 \subsection{Appendix}
+
+\subsection{Part 1}
+
+The Approximation functions can be found in the file \verb|./part1/shortest_path_approx.py|.
+The functions are labeled $dijkstra\_approx()$ and $bellman\_ford\_approx()$.
+
+The Experiment Suite Test are found in \verb|./part1/exp1.py|. Our three test functions are called $test1()$, $test4()$ and  $test5()$. The actual tests are ran at the bottom of the file, under the \verb|if __name__ == "__main__":| condition.
+
+The Mystery Function Tests are found in \verb|./part1/mystery_algorithm.py|. There are two functions, $testing()$ (which is were we generate small graphs and run the mystery function on it), and $determiningTimeComplexity()$, which is the function that actually creates the graphs found in Part 1. The actual functions are ran at the bottom of the file, under the \verb|if __name__ == "__main__":| condition.
+
+\subsection{Part 2}
+
+\subsection{Part 3}
+
+\subsection{Part 4}
 
 \end{document}
 

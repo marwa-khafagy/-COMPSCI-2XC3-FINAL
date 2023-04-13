@@ -2,6 +2,19 @@ import timeit
 from matplotlib import pyplot as plt
 from plotting import PlotGroup # You have to open the code file in VSCode, not our repo
 import source.final_project_part1 as fp1
+import random
+
+
+saveFigures = True
+saveFileDir = "./images/part1/"
+
+def finish_figure(saveLocation):
+
+    if saveFigures:
+        print("Saving Figure to " + saveLocation)
+        plt.savefig(saveFileDir + saveLocation, bbox_inches='tight')
+
+    plt.show()
 
 #
 # Generate Small Graphs
@@ -41,15 +54,15 @@ def testing():
 #
 #
 
-def determiningTimeComplexity(k = 10):
+def determiningTimeComplexity(k = 5):
 
     # Plots
     emptyPlot = PlotGroup("Graph X Nodes, 0 Edges")
     densePlot = PlotGroup("Graph X Nodes, Total Edges")
+    xtwo = PlotGroup("x^2")
     xthree = PlotGroup("x^3")
 
-    logScale = [0, 1, 2, 4, 8, 16, 32, 64, 96, 128, 192, 256, 320, 512]
-    for n in logScale:
+    for n in range(0, 501, 50):
 
         #Times
         emptyTime = 0
@@ -72,7 +85,10 @@ def determiningTimeComplexity(k = 10):
             #
             # Fully Populate Graph
             #
-            G = G
+            for i in range(n):
+                for j in range(n):
+                    w = random.randrange(-n*10, n*10)
+                    G.add_edge(i, j, w)
 
             # Retime Mystery on Full
             start = timeit.default_timer()
@@ -87,26 +103,42 @@ def determiningTimeComplexity(k = 10):
         emptyPlot.add_point(n, emptyTime / k)
         densePlot.add_point(n, denseTime / k)
         xthree.add_point(n, n**3)
+        xtwo.add_point(n, n**2)
 
         print(f'Plotted n={n}')
 
     #
     # Graph
-
     plt.title("Time to Compute Mystery Function vs Weighted Edge Node Count (Log Graph)")
     emptyPlot.plotlog()
     densePlot.plotlog()
+    xtwo.plotlog()
     xthree.plotlog()
-    
+
+    plt.xlabel("Size of Graph")
+    plt.xlabel("Time To Perform Mystery Function")
     plt.legend()
-    plt.show()
+    
+    finish_figure("mysteryLog.png")
+
+    #
+    # Graph Again
+    #
 
     plt.title("Time to Compute Mystery Function vs Weighted Edge Node Count")
     emptyPlot.plot()
     densePlot.plot()
-    xthree.plot()
 
+    plt.xlabel("Size of Graph")
+    plt.xlabel("Time To Perform Mystery Function")
     plt.legend()
-    plt.show()
 
-determiningTimeComplexity()
+    finish_figure("mysteryReal.png")
+
+#
+#
+#
+if (__name__ == '__main__'):
+
+    #testing()
+    determiningTimeComplexity()
