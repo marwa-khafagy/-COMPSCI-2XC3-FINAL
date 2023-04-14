@@ -407,8 +407,8 @@ We also plot the line of $x^3$ and $x^2$ on our log/log graph. This is an intuit
 
 Now, running our experiment, we get the following results.
 
-\figureInsetScaled{images/part1/mystery_real.png}{Real Graph of Graph Size vs Time}{0.5}
-\figureInsetScaled{images/part1/mystery_graph.png}{Log Graph of Graph Size vs Time}{0.5}
+\figureInsetScaled{images/part1/mysteryReal.png}{Real Graph of Graph Size vs Time}{0.5}
+\figureInsetScaled{images/part1/mysteryLog.png}{Log Graph of Graph Size vs Time}{0.5}
 
  On a Log/Log graph, the slope of a linear line is the degree of the polynomial, and what we can see is that our function, in both best and worst case, match the slope of $x^3$ as $x$ goes to infinity. In this case, $x$ is our node count, or $V$; meaning that \textbf{we can conclude that our mystery function is on the order of} $\Theta(V^3)$.
 
@@ -444,9 +444,64 @@ We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual r
 
 \newpage
 \section{Part 3}
+Let us now compare the performance of Dijkstra’s Algorithm and the A* Algorithm. 
 \subsection{Experiment Suite 2}
+
+We define our tests using the data given to us that describes the london stations (real world data). Using this data, we will be able to see how the two algorithms perform using a good heuristic for A*.\\
+\\
+The heuristic we use is the real world distance in km between two stations using their latitude and longitude. This is done using the geopy library and the distance function which uses the haversine formula.\\
+
+\subsubsection{Test 1}
+
+In this test, we will compare the performance of the two algorithms on all combinations of stations. This will be a general experiment so we can see how the two algorithms perform in general.\\
+\\
+The test behaves as follows: \\
+
+\begin{itemize}
+    \item We parse through the two files given to us. With the \emph{london\_connections} file, we put the data in the WeightedGraph data structure (which is slightly modified to also store the line between two stations). With the \emph{london\_stations} file, we put the data in a dictionary where the key is the station name and the value is another dictionary with the latitude and longitude, name, zone, total lines, and rail of the station. \\
+    \item Then, for each combination of stations, we run the two algorithms, record the time it takes to run then add those times to their own total time variables.
+    \item Finally, we divide the total time by the number of combinations to get the average time for each algorithm.
+    \item We then repeat this for 15 trials and plot the results on a graph.
+    
+\end{itemize}
+
+We only conduct 15 trials as finding the shortest path between all combinations of stations is a very time consuming process and only 15 trials are realistically needed to get a good idea of how the algorithms perform.\\
+\newpage
+\subsubsection{Test 1 Results}
+
+\figureInsetScaled{images/part3/General.png}{General Performance A* and Dijkstra’s Algorithm}{1}
+
+From the graph above, we can see that although both algorithms have the same spikes and dips (these may be due to a number of reasons such as the computer being busy with other processes), A* is generally twice as fast as Dijkstra’s Algorithm. This is expected as the A* algorithm uses a heuristic function to guide the algorithm in the right direction and Dijkstra's algorithm may waste time on paths that are unlikely to lead to the shortest path.\\
+\\
+The heuristic function we chose is the real world distance in km between two stations using their latitude and longitude. This proves to be a good heuristic function as a station that has a shorter time between it and the destination station may be leading away from the destination station. Thus, the A* algorithm is able to find the shortest path faster than Dijkstra’s algorithm.\\
+
+\subsubsection{Test 2}
+
+In this test, we will only compare the performance of the two algorithms on the shortest path between stations that are in the same zone. This data is provided to us in the \emph{london\_stations} file. We will conduct this test to see if the algorithm perform differently if the stations are closer together (i.e. in the same zone).\\
+\\
+The test behaves as follows (similar to Test 1): \\
+\\
+\begin{itemize}
+    \item We parse through the two files given to us. With the \emph{london\_connections} file, we put the data in the WeightedGraph data structure (which is slightly modified to also store the line between two stations). With the \emph{london\_stations} file, we put the data in a dictionary where the key is the station name and the value is another dictionary with the latitude and longitude, name, zone, total lines, and rail of the station. \\
+    \item Then, for each combination of stations that are in the same zone, we run the two algorithms, record the time it takes to run then add those times to their own total time variables.
+    \item Finally, we divide the total time by the number of combinations to get the average time for each algorithm.
+    \item We then repeat this for 15 trials and plot the results on a graph.
+    
+\end{itemize}
+
+\subsubsection{Test 2 Results}
+
+\figureInsetScaled{images/part3/SameZone.png}{Performance A* and Dijkstra’s Algorithm on Stations in the Same Zone}{1}
+
+As we can see from the above graph that even when finding the shortest path between stations in the same zone, the A* algorithm is still faster than Dijkstra’s algorithm. This is still unsurprising as there would be no reason that the heuristic function would perform any worse in this case.\\
+\\
+However, what is interesting is that the the different in performance between the two algorithms in this case is much smaller. The spikes and dips remain the same, but the A* algorithm is only somewhat marginally better than Dijkstra’s algorithm. This is likely due to the fact that the stations are closer together and thus the possibility that Dijkstra’s will traverse down the wrong path is less. \\
+
 \subsection{Discussion \& Insight}
 
+From the tests we ran, we can generally conclude that the A* algorithm is faster than Dijkstra’s algorithm. The use of the heuristic by A* is hugely beneficial as it allows the algorithm to traverse down the right path and thus find the shortest path faster. However, when it comes to certain combinations of station (like the stations being in the same zone), the difference in performance is not as significant. \\
+\\
+From the results we gathered when the stations of the shortest path were in the same zone, we can theorize that when the stations are closer together, the heuristic function is not as useful as it is when the stations are farther apart.\\
 
 \newpage
 \section{Part 4}
@@ -454,6 +509,7 @@ We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual r
 
 \newpage
 \subsection{Executive Summary}
+
 
 \newpage
 \subsection{Appendix}
@@ -470,6 +526,10 @@ The Mystery Function Tests are found in \verb|./part1/mystery_algorithm.py|. The
 \subsection{Part 2}
 
 \subsection{Part 3}
+
+The experiments ran can be found inside of \emph{.\_/part3\_/part3experiments.py}. The tests used are named \emph{general\_experiments} and \emph{same\_zone\_experiments} \\
+\\
+The functions used are \emph{a\_star.py} and \emph{Dijkstra.py}. The data structure used can be found in the \emph{WeightGraph.py} file. The actual experiments are ran at the bottom of the file, under the \verb|if __name__ == "__main__":| condition.
 
 \subsection{Part 4}
 
