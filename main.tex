@@ -417,7 +417,9 @@ We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual r
 \newpage
 \section{Part 2}
 \subsection{A$^{*}$ Implementation}
+
     See (a\_star.py)'s $a\_star()$ method.
+
 \subsubsection{How the algorithm works}
     \begin{itemize}
         \item The algorthm is provided all of the same input as Dijkstra, with an additional input that is referred to as a heuristic function
@@ -507,6 +509,59 @@ From the results we gathered when the stations of the shortest path were in the 
 \section{Part 4}
 \subsection{UML Discussion \& Implementation}
 
+First, we port over everything from the other parts into our Part 4. Then, we construct the abstract classes as described by the UML.
+
+Now that we have this, we modify the parts of our string
+
+
+% Refactor you code to adhere to this diagram. Furthermore, consider the points listed below and discuss
+% these points in a section labelled Part 4 in your report (where appropriate). Python is a different from
+% Java when it comes to things like interfaces, public/private, etc. Do some research regarding how these
+% things are done (if at all) in Python.
+After conducting some research, it became evident to us that python doesn't traditionally support Interfaces. 
+To get around this roadblock, python users instead implement the interfaces as abstract classes.
+This is done using the ABC and abstractclass methods from the abc python library. 
+
+% • The A_Star class Figure 2 does not exactly line up with the one I asked you to implement in Part
+% 2. Do no rewrite you’re A* algorithm! Instead, treat the A_Star class from Figure 2 as an
+% “adapter”.
+The reason the A\_star class does not exactly line up with the one from part two is because the function in part two took in an additional input
+that was the heuristic funciton (implemented as a dictionary). To get around this while complying with the open close principal
+we used the original function from part two as an auxiliary funciton that the function $calc\_sp()$ (given in the UML) uses. This auxiliary function remains unchanged, except for a rename,
+as we now call it $calc\_sp\_aux()$. On the other hand, the $calc\_sp()$ acts as an adapter, as it returns $calc\_sp\_aux()$, passing the parameters it was given as well as the heuristic function.
+For robustness, we first check to make sure that the graph being used is of type HeuristicGraph, to ensure that there does indeed exits a heuristic function. 
+In the case that the graph given as input is not a HeuristicGraph, a default heuristic function that always returns 0 is used. This would effectively turn A* back into Dijkstra. 
+
+% • Discuss what design principles and patterns are being used in Figure 2.
+The design pattern that is being used in the given UML diagram is the Strategy pattern. This is seen in the relationship between the
+A\_star, Bellman\_Ford, Dijkstra, and SPAlgorithm classes. This complies with the open-close principle. This is because by doing so, 
+we can very easily add new algorithms in the future while not changing any of the old code. In addition to this, we have designed for interfaces. Although technically 
+we implemented abstract classes instead of interfaces, we have still implemeted this design principle, since most of our classes are not concrete, and thus
+our application can better anticipate for change. 
+
+% • Figure 2 is a step in the right direction, but there is still a lot of work that can be done. For
+% example, how graph Nodes are represented is being exposed to the rest of the application. That
+% is, the rest of the application assume nodes are represented by integers. What if this needs to
+% be changed in the future? For example, what if later on we need to switch nodes to be
+% represented at Strings? Or what if nodes should carry more information than their names?
+% Explain how you would change the design in Figure 2 to be robust to these potential changes.
+We would have to create new functions that encapsulate the way nodes are represented. Right now, we treat the values of the nodes as node identifiers. We should separate these parts of the node to make the functionality more robust.
+
+Instead of getting the nodes by parsing the graph's adjacency list, we should maybe make a function like \verb|get_node_ids()|, which returns all node id's. Then we can have a \verb|get_node(id)| function which then gives the node's identifier, which could then point us to the value we are storing.
+
+To make the design more robust, we should make a separate Node abstract class
+and have the nodes in the graph be of type Node instead. Within the Node class, we would use generics to have a variable the node value. This way, the node can have any type. In the case where the nodes store more than one value all that would need to be done is extend the node class with a new class that contains the other values that must also be stored. 
+
+Then, the graph could contain multiple types of nodes (although it shouldn't), but we have the robustness to do so.
+
+% • Discuss what other types of graphs we could have implement “Graph”. What other
+% implementations exist? ***(TODO)**
+Currently, the only graph we have is a Heuristic Graph, and an directed weighted graph.
+
+For more traditional graphs, we could also implement undirected weighted graphs, which adds two directed edges whenever we push a new edge.
+
+We could also have a proxy class which could act as an Unweighted Graph. It would effectively act as a weighted graph, but we ensure that all weights are the same. This may cause some complications when we look at the UML diagram, but these could be rectified with some refactoring.
+
 \newpage
 \subsection{Executive Summary}
 
@@ -516,7 +571,9 @@ From the results we gathered when the stations of the shortest path were in the 
 
 \subsection{Part 1}
 
-The Approximation functions can be found in the file \verb|./part1/shortest_path_approx.py|.
+The Approximation functions can be found in the file
+
+\verb|./part1/shortest_path_approx.py|.
 The functions are labeled $dijkstra\_approx()$ and $bellman\_ford\_approx()$.
 
 The Experiment Suite Test are found in \verb|./part1/exp1.py|. Our three test functions are called $test1()$, $test4()$ and  $test5()$. The actual tests are ran at the bottom of the file, under the \verb|if __name__ == "__main__":| condition.
@@ -525,6 +582,8 @@ The Mystery Function Tests are found in \verb|./part1/mystery_algorithm.py|. The
 
 \subsection{Part 2}
 
+Find the A$^{*}$ algorithm at \verb|./part2/a_star.py|. The function is labeled as $a\_star()$.
+
 \subsection{Part 3}
 
 The experiments ran can be found inside of \emph{.\_/part3\_/part3experiments.py}. The tests used are named \emph{general\_experiments} and \emph{same\_zone\_experiments} \\
@@ -532,6 +591,10 @@ The experiments ran can be found inside of \emph{.\_/part3\_/part3experiments.py
 The functions used are \emph{a\_star.py} and \emph{Dijkstra.py}. The data structure used can be found in the \emph{WeightGraph.py} file. The actual experiments are ran at the bottom of the file, under the \verb|if __name__ == "__main__":| condition.
 
 \subsection{Part 4}
+
+
+Find all classes co-responding to the UML Diagram at at \verb|./part4/|. Each class is in it's own designated \verb|.py| file.
+
 
 \end{document}
 
