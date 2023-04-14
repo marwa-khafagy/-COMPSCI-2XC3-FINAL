@@ -591,6 +591,14 @@ We could also have a proxy class which could act as an Unweighted Graph. It woul
 
 \subsection{Part 1}
 
+What we can determine from Part 1 is that
+\begin{itemize}
+    \item Bellman-Ford takes a lot of relaxations with negative edge weights
+    \item Dijkstra and Bellman-Ford don't need that many relaxations for positive edge weighted graphs (around 8, even at large random graphs)
+    \item The Approximation Total Distance rapidly approaches the real total distance with larger relaxation count (approx 10)
+    \item From Test 4, we see that Dijkstra approximation collapses towards real total distance slightly faster.
+\end{itemize}
+
 \subsection{Part 2}
 
 \subsection{Part 3}
@@ -631,7 +639,5 @@ The functions used are \emph{a\_star.py} and \emph{Dijkstra.py}. The data struct
 
 Find all classes co-responding to the UML Diagram at at \verb|./part4/|. Each class is in it's own designated \verb|.py| file.
 
-
-\end{document}
 
 \end{document}
