@@ -501,11 +501,11 @@ Then, the graph could contain multiple types of nodes (although it shouldn't), b
 
 % • Discuss what other types of graphs we could have implement “Graph”. What other
 % implementations exist? ***(TODO)**
-Currently, the only graph we have is a Heuristic Graph, and an undirected weighted graph.
+Currently, the only graph we have is a Heuristic Graph, and an directed weighted graph.
 
-For more traditional graphs, we could also implement undirected weighted graphs. There is no use for unweighted graphs because there cannot exist a weight functionality, but we could add it s.t, behind the scenes, all the weights are the same.
+For more traditional graphs, we could also implement undirected weighted graphs, which adds two directed edges whenever we push a new edge.
 
-We also do not have directed graphs, which we could add by not adding the `from node' to the `to node''s adjacency list. 
+We could also have a proxy class which could act as an Unweighted Graph. It would effectively act as a weighted graph, but we ensure that all weights are the same. This may cause some complications when we look at the UML diagram, but these could be rectified with some refactoring.
 
 \newpage
 \subsection{Executive Summary}
