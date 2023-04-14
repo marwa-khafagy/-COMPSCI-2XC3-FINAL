@@ -20,7 +20,7 @@ class A_star(SPAlgorithm):
         pred = {} #Predecessor dictionary
         dist = {} #Distance dictionary
         Q = min_heap.MinHeap([])
-        nodes = list(G.adj.keys())
+        nodes = list(G.adj.keys()) ## <<<< No way to get nodes otherwise
 
         #Initialize priority queue/heap and distances
         for node in nodes:
@@ -38,11 +38,15 @@ class A_star(SPAlgorithm):
                 dist[current_node] = current_element.key - h[current_node]
             else: 
                 dist[current_node] = current_element.key
-            for neighbour in G.adj[current_node]:
+
+            # SWITCH METHOD TO COMPLY WITH UML
+            for neighbour in G.get_adj_nodes(current_node):
+
                 if dist[current_node] + G.w(current_node, neighbour) < dist[neighbour]:
                     Q.decrease_key(neighbour, dist[current_node] + G.w(current_node, neighbour) + h[neighbour])
                     dist[neighbour] = dist[current_node] + G.w(current_node, neighbour)
                     pred[neighbour] = current_node
+        
         
         path = [dest]
         while path[-1] != source:

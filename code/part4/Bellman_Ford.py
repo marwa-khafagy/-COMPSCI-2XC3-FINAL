@@ -9,7 +9,7 @@ class Bellman_Ford(SPAlgorithm):
     def bellman_ford(self, G, source):
         pred = {} #Predecessor dictionary. Isn't returned, but here for your understanding
         dist = {} #Distance dictionary
-        nodes = list(G.adj.keys())
+        nodes = list(G.adj.keys()) # NO WAY TO GET NODES OTHERWISE
 
         #Initialize distances
         for node in nodes:
@@ -19,7 +19,8 @@ class Bellman_Ford(SPAlgorithm):
         #Meat of the algorithm
         for _ in range(G.number_of_nodes()):
             for node in nodes:
-                for neighbour in G.adj[node]:
+                # SWITCH METHOD TO COMPLY WITH UML
+                for neighbour in G.get_adj_nodes(node):
                     if dist[neighbour] > dist[node] + G.w(node, neighbour):
                         dist[neighbour] = dist[node] + G.w(node, neighbour)
                         pred[neighbour] = node

@@ -11,7 +11,7 @@ class Bellman_Ford(SPAlgorithm):
         pred = {} #Predecessor dictionary. Isn't returned, but here for your understanding
         dist = {} #Distance dictionary
         Q = min_heap.MinHeap([])
-        nodes = list(G.adj.keys())
+        nodes = list(G.adj.keys()) #NO WAY TO GET NODES OTHERWISE
 
         #Initialize priority queue/heap and distances
         for node in nodes:
@@ -24,7 +24,9 @@ class Bellman_Ford(SPAlgorithm):
             current_element = Q.extract_min()
             current_node = current_element.value
             dist[current_node] = current_element.key
-            for neighbour in G.adj[current_node]:
+            
+            # SWITCH METHOD TO COMPLY WITH UML
+            for neighbour in G.get_adj_nodes(current_node):
                 if dist[current_node] + G.w(current_node, neighbour) < dist[neighbour]:
                     Q.decrease_key(neighbour, dist[current_node] + G.w(current_node, neighbour))
                     dist[neighbour] = dist[current_node] + G.w(current_node, neighbour)

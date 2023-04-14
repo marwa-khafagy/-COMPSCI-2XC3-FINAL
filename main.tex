@@ -456,7 +456,27 @@ We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual r
 
 First, we port over everything from the other parts into our Part 4. Then, we construct the abstract classes as described by the UML.
 
-Now that we have this, we modify the parts of our string
+Now that we have this, we modify the parts of our functions which access parts of our graph.
+
+The only real function we need to switch, which complies with the Encapsulation design principle, is switching the lines
+
+\begin{verbatim}
+    for neighbour in G.adj[current_node]:
+\end{verbatim}
+
+with the code
+
+\begin{verbatim}
+    for neighbour in G.get_adj_nodes(current_node):
+\end{verbatim}
+
+We do this because we don't want to expose how the Graph stores adjacent nodes. If we were to create a new Graph class that doesn't contain an adjacency list, we'd raise an error.
+
+This is the only thing we can modify in our algorithms because the other methods defined in the UML diagram for the graph class are already used.
+
+However, a clear problem (in the exposing sense), is getting the nodes of the graph. We are not given a $get\_nodes()$ function, meaning, in all of our algorithms, we are still accessing the adjacency list to get the nodes (by getting the key list). This would need to be added to the UML Diagram.
+
+We are however, given a $get\_nodes\_count()$ function. While this naively may solve the solution now, it isn't how we should actually solve the problem. This is discussed further below.
 
 
 % Refactor you code to adhere to this diagram. Furthermore, consider the points listed below and discuss
@@ -464,24 +484,28 @@ Now that we have this, we modify the parts of our string
 % Java when it comes to things like interfaces, public/private, etc. Do some research regarding how these
 % things are done (if at all) in Python.
 After conducting some research, it became evident to us that python doesn't traditionally support Interfaces. 
+
 To get around this roadblock, python users instead implement the interfaces as abstract classes.
-This is done using the ABC and abstractclass methods from the abc python library. 
+This is done using the ABC and abstract class methods from the abc python library. 
 
 % • The A_Star class Figure 2 does not exactly line up with the one I asked you to implement in Part
 % 2. Do no rewrite you’re A* algorithm! Instead, treat the A_Star class from Figure 2 as an
 % “adapter”.
-The reason the A\_star class does not exactly line up with the one from part two is because the function in part two took in an additional input
-that was the heuristic funciton (implemented as a dictionary). To get around this while complying with the open close principal
-we used the original function from part two as an auxiliary funciton that the function $calc\_sp()$ (given in the UML) uses. This auxiliary function remains unchanged, except for a rename,
-as we now call it $calc\_sp\_aux()$. On the other hand, the $calc\_sp()$ acts as an adapter, as it returns $calc\_sp\_aux()$, passing the parameters it was given as well as the heuristic function.
+The reason the A\_star class does not exactly line up with the one from part two is because the function in part two took in an additional input that was the heuristic funciton (implemented as a dictionary). 
+
+To get around this while complying with the open close principal we used the original function from part two as an auxiliary funciton that the function $calc\_sp()$ (given in the UML) uses. This auxiliary function remains unchanged, except for a rename, as we now call it $calc\_sp\_aux()$. 
+
+On the other hand, the $calc\_sp()$ acts as an adapter, as it returns $calc\_sp\_aux()$, passing the parameters it was given as well as the heuristic function it creates.
+
 For robustness, we first check to make sure that the graph being used is of type HeuristicGraph, to ensure that there does indeed exits a heuristic function. 
 In the case that the graph given as input is not a HeuristicGraph, a default heuristic function that always returns 0 is used. This would effectively turn A* back into Dijkstra. 
 
 % • Discuss what design principles and patterns are being used in Figure 2.
-The design pattern that is being used in the given UML diagram is the Strategy pattern. This is seen in the relationship between the
-A\_star, Bellman\_Ford, Dijkstra, and SPAlgorithm classes. This complies with the open-close principle. This is because by doing so, 
+The design pattern that is being used in the given UML diagram is the Strategy pattern. This is seen in the relationship between the A\_star, Bellman\_Ford, Dijkstra, and SPAlgorithm classes. 
+
+This complies with the open-close principle. This is because by doing so, 
 we can very easily add new algorithms in the future while not changing any of the old code. In addition to this, we have designed for interfaces. Although technically 
-we implemented abstract classes instead of interfaces, we have still implemeted this design principle, since most of our classes are not concrete, and thus
+we implemented abstract classes instead of interfaces, we have still implemented this design principle, since most of our classes are not concrete, and thus
 our application can better anticipate for change. 
 
 % • Figure 2 is a step in the right direction, but there is still a lot of work that can be done. For
@@ -490,12 +514,12 @@ our application can better anticipate for change.
 % be changed in the future? For example, what if later on we need to switch nodes to be
 % represented at Strings? Or what if nodes should carry more information than their names?
 % Explain how you would change the design in Figure 2 to be robust to these potential changes.
-We would have to create new functions that encapsulate the way nodes are represented. Right now, we treat the values of the nodes as node identifiers. We should separate these parts of the node to make the functionality more robust.
-
-Instead of getting the nodes by parsing the graph's adjacency list, we should maybe make a function like \verb|get_node_ids()|, which returns all node id's. Then we can have a \verb|get_node(id)| function which then gives the node's identifier, which could then point us to the value we are storing.
+We would have to create new functions that encapsulate the way nodes are represented. Right now, we treat the values of the nodes as node identifiers. We should separate these parts of the node to make the functionality more robust. This is why we can't and shouldn't access the nodes by iteration over the number of them -- we make a major assumption that the node values are the keys, and that is something we really shouldn't be assuming.
 
 To make the design more robust, we should make a separate Node abstract class
 and have the nodes in the graph be of type Node instead. Within the Node class, we would use generics to have a variable the node value. This way, the node can have any type. In the case where the nodes store more than one value all that would need to be done is extend the node class with a new class that contains the other values that must also be stored. 
+
+Instead of getting the nodes by parsing the graph's adjacency list, we should maybe make a function like \verb|get_node_ids()|, which returns an enumerable object containing all node id's. Then we can have a \verb|get_node(id)| function which then returns the node, which could then point us to the value we are storing.
 
 Then, the graph could contain multiple types of nodes (although it shouldn't), but we have the robustness to do so.
 
