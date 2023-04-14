@@ -563,11 +563,23 @@ For more traditional graphs, we could also implement undirected weighted graphs,
 We could also have a proxy class which could act as an Unweighted Graph. It would effectively act as a weighted graph, but we ensure that all weights are the same. This may cause some complications when we look at the UML diagram, but these could be rectified with some refactoring.
 
 \newpage
-\subsection{Executive Summary}
+\section{Executive Summary}
+
+\subsection{Part 1}
+
+\subsection{Part 2}
+
+\subsection{Part 3}
+
+A* gerenally performs much better than Dijkstra’s algorithm, as it performs approximately twice as fast as Dijkstra’s algorithm. This is because A* uses a heuristic function to compute the real timedistance between the current node and the goal node. This allows A* to skip over nodes that are not on the shortest path, and thus reducing the number of nodes that need to be visited.\\
+\\
+However, when stations are closer together (which can be determined from their zone), Dijkstra’s performs better and the different in performance between the two algorithms is not as significant. This is because the heuristic function is not as accurate when the stations are closer together, and thus A* will not be able to skip over as many nodes.\\
+
+\subsection{Part 4}
 
 
 \newpage
-\subsection{Appendix}
+\section{Appendix}
 
 \subsection{Part 1}
 
