@@ -407,8 +407,8 @@ We also plot the line of $x^3$ and $x^2$ on our log/log graph. This is an intuit
 
 Now, running our experiment, we get the following results.
 
-\figureInsetScaled{images/part1/mystery_real.png}{Real Graph of Graph Size vs Time}{0.5}
-\figureInsetScaled{images/part1/mystery_graph.png}{Log Graph of Graph Size vs Time}{0.5}
+\figureInsetScaled{images/part1/mysteryReal.png}{Real Graph of Graph Size vs Time}{0.5}
+\figureInsetScaled{images/part1/mysteryLog.png}{Log Graph of Graph Size vs Time}{0.5}
 
  On a Log/Log graph, the slope of a linear line is the degree of the polynomial, and what we can see is that our function, in both best and worst case, match the slope of $x^3$ as $x$ goes to infinity. In this case, $x$ is our node count, or $V$; meaning that \textbf{we can conclude that our mystery function is on the order of} $\Theta(V^3)$.
 
@@ -417,7 +417,9 @@ We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual r
 \newpage
 \section{Part 2}
 \subsection{A$^{*}$ Implementation}
+
     See (a\_star.py)'s $a\_star()$ method.
+
 \subsubsection{How the algorithm works}
     \begin{itemize}
         \item The algorthm is provided all of the same input as Dijkstra, with an additional input that is referred to as a heuristic function
@@ -451,6 +453,12 @@ We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual r
 \newpage
 \section{Part 4}
 \subsection{UML Discussion \& Implementation}
+
+First, we port over everything from the other parts into our Part 4. Then, we construct the abstract classes as described by the UML.
+
+Now that we have this, we modify the parts of our string
+
+
 % Refactor you code to adhere to this diagram. Furthermore, consider the points listed below and discuss
 % these points in a section labelled Part 4 in your report (where appropriate). Python is a different from
 % Java when it comes to things like interfaces, public/private, etc. Do some research regarding how these
@@ -462,7 +470,7 @@ This is done using the ABC and abstractclass methods from the abc python library
 % • The A_Star class Figure 2 does not exactly line up with the one I asked you to implement in Part
 % 2. Do no rewrite you’re A* algorithm! Instead, treat the A_Star class from Figure 2 as an
 % “adapter”.
-The reason the A_star class does not exactly line up with the one from part two is because the function in part two took in an additional input
+The reason the A\_star class does not exactly line up with the one from part two is because the function in part two took in an additional input
 that was the heuristic funciton (implemented as a dictionary). To get around this while complying with the open close principal
 we used the original function from part two as an auxiliary funciton that the function $calc\_sp()$ (given in the UML) uses. This auxiliary function remains unchanged, except for a rename,
 as we now call it $calc\_sp\_aux()$. On the other hand, the $calc\_sp()$ acts as an adapter, as it returns $calc\_sp\_aux()$, passing the parameters it was given as well as the heuristic function.
@@ -482,13 +490,22 @@ our application can better anticipate for change.
 % be changed in the future? For example, what if later on we need to switch nodes to be
 % represented at Strings? Or what if nodes should carry more information than their names?
 % Explain how you would change the design in Figure 2 to be robust to these potential changes.
-To make the design more robust, we should make a seperate Node abstract class
-and have the nodes in the graph be of type Node instead. Within the Node class, we would use generics to have a variable the node value. This way, the node can have any type. In the case where the nodes store more than one value
-we all that would need to be done is extend the node class with a new class that contains the other values that must also be stored. 
+We would have to create new functions that encapsulate the way nodes are represented. Right now, we treat the values of the nodes as node identifiers. We should separate these parts of the node to make the functionality more robust.
+
+Instead of getting the nodes by parsing the graph's adjacency list, we should maybe make a function like \verb|get_node_ids()|, which returns all node id's. Then we can have a \verb|get_node(id)| function which then gives the node's identifier, which could then point us to the value we are storing.
+
+To make the design more robust, we should make a separate Node abstract class
+and have the nodes in the graph be of type Node instead. Within the Node class, we would use generics to have a variable the node value. This way, the node can have any type. In the case where the nodes store more than one value all that would need to be done is extend the node class with a new class that contains the other values that must also be stored. 
+
+Then, the graph could contain multiple types of nodes (although it shouldn't), but we have the robustness to do so.
 
 % • Discuss what other types of graphs we could have implement “Graph”. What other
 % implementations exist? ***(TODO)**
-For more traditional graphs, we could also inmplement undirected weighted graphs. There is no use for unweighted graphs because there cannot exist 
+Currently, the only graph we have is a Heuristic Graph, and an undirected weighted graph.
+
+For more traditional graphs, we could also implement undirected weighted graphs. There is no use for unweighted graphs because there cannot exist a weight functionality, but we could add it s.t, behind the scenes, all the weights are the same.
+
+We also do not have directed graphs, which we could add by not adding the `from node' to the `to node''s adjacency list. 
 
 \newpage
 \subsection{Executive Summary}
@@ -498,7 +515,9 @@ For more traditional graphs, we could also inmplement undirected weighted graphs
 
 \subsection{Part 1}
 
-The Approximation functions can be found in the file \verb|./part1/shortest_path_approx.py|.
+The Approximation functions can be found in the file
+
+\verb|./part1/shortest_path_approx.py|.
 The functions are labeled $dijkstra\_approx()$ and $bellman\_ford\_approx()$.
 
 The Experiment Suite Test are found in \verb|./part1/exp1.py|. Our three test functions are called $test1()$, $test4()$ and  $test5()$. The actual tests are ran at the bottom of the file, under the \verb|if __name__ == "__main__":| condition.
@@ -507,9 +526,15 @@ The Mystery Function Tests are found in \verb|./part1/mystery_algorithm.py|. The
 
 \subsection{Part 2}
 
+Find the A$^{*}$ algorithm at \verb|./part2/a_star.py|. The function is labeled as $a\_star()$.
+
 \subsection{Part 3}
 
 \subsection{Part 4}
+
+
+Find all classes co-responding to the UML Diagram at at \verb|./part4/|. Each class is in it's own designated \verb|.py| file.
+
 
 \end{document}
 
