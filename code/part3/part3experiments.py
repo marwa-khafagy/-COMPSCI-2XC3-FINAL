@@ -11,7 +11,6 @@ import matplotlib.pyplot as plot
 
 
 TRIALS = 15
-combos = 20
 
 
 def parse_connections_csv(path):
@@ -85,7 +84,7 @@ def general_experiments():
                     stop = timeit.default_timer()
                     timea += stop - start
                 except:
-                    print('A* failed')
+                    pass
 
                 # Run Dijkstra's
                 print(f'Running Dijkstra from {source} to {dest}')
@@ -96,9 +95,9 @@ def general_experiments():
 
         # Add the average time taken for each trial to the plot
         djikstra_performace.add_point(
-            i, timed / (len(stations) * (len(stations) - 1)))
+            i, timed / (stations * stations))
         a_star_performance.add_point(
-            i, timea / (len(stations) * (len(stations) - 1)))
+            i, timea / (stations * stations))
 
     # Plot the results
     djikstra_performace.plot()
@@ -128,22 +127,13 @@ def same_zone_experiments():
         timed = 0
         seen = set()
 
-        stimes = 0
-        dtimes = 0
-
         # Iterate through all pairs of stations
-        keys = list(stations.keys())
-        random.shuffle(keys)
-        for source in keys:
-            if stimes == combos:
-                break
-            for dest in keys:
+
+        for source in stations:
+            for dest in stations:
                 # If the source and destination are the same, skip
                 if source == dest or stations[source]['zone'] != stations[dest]['zone'] or (source, dest) in seen or (dest, source) in seen:
                     continue
-
-                dtimes += 1
-                print(f'stime is {stimes}, dtimes is {dtimes}')
 
                 seen.add((source, dest))
                 seen.add((dest, source))
@@ -162,7 +152,7 @@ def same_zone_experiments():
                     stop = timeit.default_timer()
                     timea += stop - start
                 except:
-                    print('A* failed')
+                    pass
 
                 # Run Dijkstra's
                 print(f'Running Dijkstra from {source} to {dest}')
@@ -171,16 +161,11 @@ def same_zone_experiments():
                 stop = timeit.default_timer()
                 timed += stop - start
 
-                if dtimes == combos:
-                    dtimes = 0
-                    stimes += 1
-                    break
-
         # Add the average time taken for each trial to the plot
         djikstra_performace.add_point(
-            i, timed / (combos * combos))
+            i, timed / (stations * (stations - 1)))
         a_star_performance.add_point(
-            i, timea / (combos * combos))
+            i, timea / (stations * (stations - 1)))
 
     # Plot the results
     djikstra_performace.plot()
@@ -194,4 +179,6 @@ def same_zone_experiments():
     plot.show()
 
 
-same_zone_experiments()
+if __name__ == '__main__':
+    general_experiments()
+    same_zone_experiments()
