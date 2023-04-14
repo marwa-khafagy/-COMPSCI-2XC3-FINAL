@@ -1,6 +1,4 @@
-from Graph import Graph
-
-class WeightedGraph(Graph):
+class WeightedGraph():
 
     def __init__(self):
         self.adj = {}
@@ -24,9 +22,8 @@ class WeightedGraph(Graph):
         if self.are_connected(node1, node2):
             return self.weights[(node1, node2)]
 
-    def are_connected(self, node1, node2): # IDK if we're allowed to keep this
+    def are_connected(self, node1, node2):  # IDK if we're allowed to keep this
         for neighbour in self.adj[node1]:
             if neighbour == node2:
                 return True
         return False
-
