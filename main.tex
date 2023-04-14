@@ -451,6 +451,44 @@ We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual r
 \newpage
 \section{Part 4}
 \subsection{UML Discussion \& Implementation}
+% Refactor you code to adhere to this diagram. Furthermore, consider the points listed below and discuss
+% these points in a section labelled Part 4 in your report (where appropriate). Python is a different from
+% Java when it comes to things like interfaces, public/private, etc. Do some research regarding how these
+% things are done (if at all) in Python.
+After conducting some research, it became evident to us that python doesn't traditionally support Interfaces. 
+To get around this roadblock, python users instead implement the interfaces as abstract classes.
+This is done using the ABC and abstractclass methods from the abc python library. 
+
+% • The A_Star class Figure 2 does not exactly line up with the one I asked you to implement in Part
+% 2. Do no rewrite you’re A* algorithm! Instead, treat the A_Star class from Figure 2 as an
+% “adapter”.
+The reason the A_star class does not exactly line up with the one from part two is because the function in part two took in an additional input
+that was the heuristic funciton (implemented as a dictionary). To get around this while complying with the open close principal
+we used the original function from part two as an auxiliary funciton that the function $calc\_sp()$ (given in the UML) uses. This auxiliary function remains unchanged, except for a rename,
+as we now call it $calc\_sp\_aux()$. On the other hand, the $calc\_sp()$ acts as an adapter, as it returns $calc\_sp\_aux()$, passing the parameters it was given as well as the heuristic function.
+For robustness, we first check to make sure that the graph being used is of type HeuristicGraph, to ensure that there does indeed exits a heuristic function. 
+In the case that the graph given as input is not a HeuristicGraph, a default heuristic function that always returns 0 is used. This would effectively turn A* back into Dijkstra. 
+
+% • Discuss what design principles and patterns are being used in Figure 2.
+The design pattern that is being used in the given UML diagram is the Strategy pattern. This is seen in the relationship between the
+A\_star, Bellman\_Ford, Dijkstra, and SPAlgorithm classes. This complies with the open-close principle. This is because by doing so, 
+we can very easily add new algorithms in the future while not changing any of the old code. In addition to this, we have designed for interfaces. Although technically 
+we implemented abstract classes instead of interfaces, we have still implemeted this design principle, since most of our classes are not concrete, and thus
+our application can better anticipate for change. 
+
+% • Figure 2 is a step in the right direction, but there is still a lot of work that can be done. For
+% example, how graph Nodes are represented is being exposed to the rest of the application. That
+% is, the rest of the application assume nodes are represented by integers. What if this needs to
+% be changed in the future? For example, what if later on we need to switch nodes to be
+% represented at Strings? Or what if nodes should carry more information than their names?
+% Explain how you would change the design in Figure 2 to be robust to these potential changes.
+To make the design more robust, we should make a seperate Node abstract class
+and have the nodes in the graph be of type Node instead. Within the Node class, we would use generics to have a variable the node value. This way, the node can have any type. In the case where the nodes store more than one value
+we all that would need to be done is extend the node class with a new class that contains the other values that must also be stored. 
+
+% • Discuss what other types of graphs we could have implement “Graph”. What other
+% implementations exist? ***(TODO)**
+For more traditional graphs, we could also inmplement undirected weighted graphs. There is no use for unweighted graphs because there cannot exist 
 
 \newpage
 \subsection{Executive Summary}
