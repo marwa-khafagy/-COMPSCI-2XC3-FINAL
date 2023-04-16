@@ -191,7 +191,7 @@ Thus, we can rerun this experiment, but with a larger range of relaxations. Obvi
 \expOneTestOneFigure{images/part1/exp1_1d}{Bellman-Ford vs Bellman-Ford's Approximation w/ Negative Edge Weights Extended}
 \FloatBarrier{}
 
-The above graph confirms our suspicion -- on graphs with negative edge weights, we need a lot more relaxations in order for BF approximation to get to the same total distance as the regular BF. In other words, BF relaxes it's nodes a lot more frequently with negative edge weights than it does if it doesn't.
+The above graph confirms our suspicion -- on graphs with negative edge weights, we need a lot more relaxations in order for BF approximation to get to the same total distance as the regular BF. In other words, BF relaxes it's nodes a lot more frequently with negative edge weights than it does if it doesn't have negative edge weights.
 
 %% ------------------------------------------------------------------------------------------ %%
 \newpage
@@ -287,7 +287,7 @@ It behaves as follows:
 
 These results are not averaged. $test5a$ seems smooth because we end up skipping 40 values of $k$ at a time. In $test5b$ shows that the variance of total distance is very high, which cause the spikes.
 
-It happens that the total distance of the graph itself here has high variation from data point to data point, because we only generate one random graph per data point. However, it is interesting to see that the peaks of the real total distance co-respond to the peaks of the approximation total distance.
+It happens that the total distance of the graph itself here has high variation from data point to data point, because we only generate one random graph per data point. However, it is interesting to see that the peaks of the real total distance correspond to the peaks of the approximation total distance.
 
 We can see this very well by looking at the 8 relaxation line -- it matches the black line perfectly. Even 6 relaxations matches quite well, even at around $n$=60. Thus, we can say that below $n=60$, Dijkstra does at most 8 relaxations per node.
 
@@ -315,7 +315,7 @@ We see this in our $test5c$. Here, we have a very large graph ($n$ around 1000).
 \newpage
 \subsubsection{Test 4}
 
-Our fourth test is named $test6$ in our python file. It behaves similarly to test 5, but instead of increasing the node count, we increase the variance of the edge weights. The idea of this test is to see if the range of values the edges can have affects the total distance of the approximation.
+Our fourth test is named $test6$ in our python file. It behaves similarly to $test5$, but instead of increasing the node count, we increase the variance of the edge weights. The idea of this test is to see if the range of values the edges can have affects the total distance of the approximation.
 
 We choose Dijkstra here instead of bellman ford, because we only want to use positive edge weights. If we use negative weights, we necessitate the usage of Bellman-Ford, but what we see in test 4 is that the number of relaxations required by Bellman-Ford with negative weights is significantly higher than BF with positive weights. As Dijkstra runs faster than BF in this case, we choose Dijkstra.
 
@@ -424,20 +424,20 @@ We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual r
     \begin{itemize}
         \item The algorthm is provided all of the same input as Dijkstra, with an additional input that is referred to as a heuristic function
         \item The heuristic function is a dictionary which takes an edge and returns a number. This number acts as a guide as to not let the algorithm go down "bad" paths. 
-        \item With this new heuristic function, the nodes in the queue are now ordered by their distance from the source plus the numerical value the heuristic function returns (for that spesific node). 
+        \item With this new heuristic function, the nodes in the queue are now ordered by their distance from the source plus the numerical value the heuristic function returns (for that specific node). 
         \item However, this heuristic function does not affect the actual cost/distance between any two nodes (i.e. the cost is perserved). Thus, when directly comparing costs to find the shortest path, the heuristic function is not considered.
     \end{itemize}
     
 \subsection{A$^{*}$ Discussion}
 \begin{enumerate}
     \item What issues with Dijkstra’s algorithm is A* trying to address?\\
-        The biggest problem with Dijkstra’s algorithm is that it considers all possible paths between nodes, which can lead the algorithm down unideal paths. Thus runtime may be wasted on paths unlikely to lead to the shortest path. 
+        The biggest problem with Dijkstra’s algorithm is that it considers all possible paths between nodes, which can lead the algorithm down unideal paths. Meaning that runtime may be wasted on paths unlikely to lead to the shortest path. 
         Thus, when working with large graphs, Dijkstra’s algorithm becomes unnecessarily slow. 
     \item How would you empirically test Dijkstra’s vs A*?\\
         To empirically test Dijkstra’s vs A*, we would compare the runtimes of finding the shortest path of graphs of varying sizes/densiy. 
     \item If you generated an arbitrary heuristic function (similar to randomly generating weights), how would Dijkstra’s algorithm compare to A*?\\
-        In that case, they may perform similarly, or more likely, Dijkstra’s may outperferm A*. This is because this arbitrary heuristic function could lead the algorithm down even more unideal paths. On the other hand, Dijkstra would be more thorough and would consider all possible paths between nodes. A better heuristic function would estimate the distance between nodes and the destination node. 
-    \item What applications would you use A* instead of Dijkstra’s?
+        In that case, they may perform similarly, or more likely, Dijkstra’s may outperform A*. This is because this arbitrary heuristic function could lead the algorithm down even more unideal paths. On the other hand, Dijkstra would be more thorough and would consider all possible paths between nodes. A better heuristic function would estimate the distance between nodes and the destination node. 
+    \item What applications would you use A* instead of Dijkstra’s?\\
         In general, given a good heuristic function, A* is more efficient than Dijkstra’s algorithm. Thus, it would make sense to use A* in applications where there exists a heuristic function that can lead the algorithm in the right direction. 
         An example is finding shortest paths in transportation/navigation systems, since a good heuristic function can be the distance between places (nodes) and the destination (destination node). More generally, any other application with pathfinding with some sort distances (like in video games) would perform better with the A* algorithm. 
 \end{enumerate}
@@ -483,7 +483,7 @@ In this test, we will only compare the performance of the two algorithms on the 
 The test behaves as follows (similar to Test 1): \\
 \\
 \begin{itemize}
-    \item We parse through the two files given to us. With the \emph{london\_connections} file, we put the data in the WeightedGraph data structure (which is slightly modified to also store the line between two stations). With the \emph{london\_stations} file, we put the data in a dictionary where the key is the station name and the value is another dictionary with the latitude and longitude, name, zone, total lines, and rail of the station. \\
+    \item We parse through the two files given to us. With the \emph{london\_connections} file, we put the data in the WeightedGraph data structure (which is slightly modified to also store the line between two stations). With the \emph{london\_stations} file, we put the data in a dictionary where the key is the station name and the value is another dictionary with the latitude and longitude, name, zone, total lines, and rail of the station. 
     \item Then, for each combination of stations that are in the same zone, we run the two algorithms, record the time it takes to run then add those times to their own total time variables.
     \item Finally, we divide the total time by the number of combinations to get the average time for each algorithm.
     \item We then repeat this for 15 trials and plot the results on a graph.
@@ -539,8 +539,8 @@ This is done using the ABC and abstract class methods from the abc python librar
 % • The A_Star class Figure 2 does not exactly line up with the one I asked you to implement in Part
 % 2. Do no rewrite you’re A* algorithm! Instead, treat the A_Star class from Figure 2 as an
 % “adapter”.
-The reason the A\_star class does not exactly line up with the one from part two is because the function in part two took in an additional input that was the heuristic funciton (implemented as a dictionary). 
-To get around this while complying with the open close principal we used the original function from part two as an auxiliary funciton that the function $calc\_sp()$ (given in the UML) uses. This auxiliary function remains unchanged, except for a rename, as we now call it $calc\_sp\_aux()$. 
+The reason the A\_star class does not exactly line up with the one from part two is because the function in part two took in an additional input that was the heuristic function (implemented as a dictionary). 
+To get around this while complying with the open close principal we used the original function from part two as an auxiliary function that the function $calc\_sp()$ (given in the UML) uses. This auxiliary function remains unchanged, except for a rename, as we now call it $calc\_sp\_aux()$. 
 On the other hand, the $calc\_sp()$ acts as an adapter, as it returns $calc\_sp\_aux()$, passing the parameters it was given as well as the heuristic function it creates.
 For robustness, we first check to make sure that the graph being used is of type HeuristicGraph, to ensure that there does indeed exits a heuristic function. 
 In the case that the graph given as input is not a HeuristicGraph, a default heuristic function that always returns 0 is used. This would effectively turn A* back into Dijkstra. 
@@ -561,7 +561,7 @@ our application can better anticipate for change.
 % Explain how you would change the design in Figure 2 to be robust to these potential changes.
 To make our application even more robust (in terms of accepting graphs with nodes represented by non-integer values), we would have to create new functions that encapsulate the way nodes are represented. Right now, we treat the values of the nodes as node identifiers. We should separate these parts of the node to make the functionality more robust. This is why we can't and shouldn't access the nodes by iteration over the number of them -- we make a major assumption that the node values are the keys, and that is something we really shouldn't be assuming.
 To alter the design, we should make a separate Node abstract class and have the 
-nodes in the graph be of type Node instead. Within the Node class, we would use generics to have a variable the node value. 
+nodes in the graph be of type Node instead. Within the Node class, we would use generics to have a variable node value. 
 This way, the node can have any type. In the case where the nodes store more than one value all that would need to be done is extend the node class with a new class that contains the other values that must also be stored. 
 
 Additionally, instead of getting the nodes by parsing the graph's adjacency list, we should maybe make a function like \verb|get_node_ids()|, which returns an enumerable object containing all node id's. Then we can have a \verb|get_node(id)| function which then returns the node, which could then point us to the value we are storing.
@@ -596,7 +596,7 @@ What we can determine from Part 2 is that
 
 \subsection{Part 3}
 
-A* gerenally performs much better than Dijkstra’s algorithm, as it performs approximately twice as fast as Dijkstra’s algorithm. This is because A* uses a heuristic function to compute the real timedistance between the current node and the goal node. This allows A* to skip over nodes that are not on the shortest path, and thus reducing the number of nodes that need to be visited.\\
+A* gerenally performs much better than Dijkstra’s algorithm, as it performs approximately twice as fast as Dijkstra’s algorithm. This is because A* uses a heuristic function to compute the real time distance between the current node and the goal node. This allows A* to skip over nodes that are not on the shortest path, and thus reducing the number of nodes that need to be visited.\\
 \\
 However, when stations are closer together (which can be determined from their zone), Dijkstra’s performs better and the different in performance between the two algorithms is not as significant. This is because the heuristic function is not as accurate when the stations are closer together, and thus A* will not be able to skip over as many nodes.\\
 
