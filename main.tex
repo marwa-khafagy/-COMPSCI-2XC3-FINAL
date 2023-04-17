@@ -176,7 +176,7 @@ In our first result, we see that on a graph with 50 nodes, It only takes 10 appr
 \expOneTestOneFigure{images/part1/exp1_1b}{$test1b$: Bellman-Ford vs Bellman-Ford's Approximation}
 \FloatBarrier{}
 
-In our second test, we see than it also take
+In our second test, we see that it also takes approximately 10 relaxations. However, we see it takes slightly more, at 12 relaxations.
 
 \FloatBarrier{}
 \expOneTestOneFigure{images/part1/exp1_1c}{$test1c$: Bellman-Ford vs Bellman-Ford's Approximation w/ Negative Edge Weights}
@@ -358,6 +358,7 @@ With more relaxations this value decreases, and eventually settles on the real v
 %% ------------------------------------------------------------------------------------------ %%
 %% ------------------------------------------------------------------------------------------ %%
 
+\newpage
 \subsection{Mystery Algorithm - Two Functions}
 
 As stated, when we run a single source algorithm we end up solving for all the pairs that include that source. Thus, to solve the all-pairs problem, we should run it on all of our nodes (a `potential source').
@@ -389,21 +390,24 @@ we say if the distance from $i$ to $k$ + $k$ to $j$ is less than what we have st
 
 Because we do this multiple times for each pair $i,j,k$ we'll end up ensuring that we get the minimum distance for $i$ to $j$, $\forall i, j$.
 
+\newpage
 \subsection{Finding the Time Complexity}
 
-What we also see is that we don't ever loop on the order of the edges in the graph. We do check edges, but only on the order of the number of nodes. In other words, the order of our mystery function is invariant on how many edges the graph has.
+ By inspecting the algorithm, we see that we don't ever loop on the order of the edges in the graph. We do check edges--but only on the order of the number of nodes. In other words, the order of our mystery function is invariant on how many edges the graph has.
 
 Thus, to derive the time complexity of our mystery function, we are going to run it on varying sized graphs.
 
-Because we are going to plot our points on a log / log graph, we first decide what our x axis points will be. Here, we go with powers of two, plus some extra to fill out the graph a little more.
+Our data points are to check are graph sizes 0 to 500, skipping every 50.
 
-Then, we generate an empty weight graph with $n$ nodes and 0 edges (best case), and time it on the mystery function. Next, we generate random nodes to completely fill the graph and re-time the mystery function again.
+Then, we generate an empty weight graph with $n$ nodes and 0 edges and time the mystery function on this empty graph.
 
-We repeat this $k$ times, (here $k$ = 5) so that we average the results (CPU usage / other processes may affect time, so we want to reduce this as a variable).
+Next we generate a new graph. Here, we completely fill the graph with edges that contain a random edge weight, ranging from -$500$ to $500$. This would be considered a graph's "worst case", where there are a lot of edges to traverse. We also show that this function works on negative edge weights.
 
-Having both an empty graph and a filled graph gets us both our best and worst cases.
+We repeat this process $k$ times, (here $k$ = 5) so that we average the time results (because other processes may affect run-time on the CPU, so we want to reduce this as a variable).
 
-We also plot the line of $x^3$ and $x^2$ on our log/log graph. This is an intuition based on how the code works, but it is only an intuition. They will, however, give us a benchmark to see the complexity of the mystery algorithm.
+Having both an empty graph and a filled graph gets us both our best and worst cases, so we can see how this would affect the time complexity of the function.
+
+We also plot the line of $x^3$ and $x^2$ on our log/log graph. This is an intuition based on how the code works, but it is only a benchmark. They will act as a reference to determine the complexity of the mystery algorithm.
 
 Now, running our experiment, we get the following results.
 
@@ -422,7 +426,7 @@ We exclude the $x^2$ and $x^3$ lines on the real graph, as it makes the actual r
 
 \subsubsection{How the algorithm works}
     \begin{itemize}
-        \item The algorthm is provided all of the same input as Dijkstra, with an additional input that is referred to as a heuristic function
+        \item The algorithm is provided all of the same input as Dijkstra, with an additional input that is referred to as a heuristic function
         \item The heuristic function is a dictionary which takes an edge and returns a number. This number acts as a guide as to not let the algorithm go down "bad" paths. 
         \item With this new heuristic function, the nodes in the queue are now ordered by their distance from the source plus the numerical value the heuristic function returns (for that specific node). 
         \item However, this heuristic function does not affect the actual cost/distance between any two nodes (i.e. the cost is perserved). Thus, when directly comparing costs to find the shortest path, the heuristic function is not considered.
