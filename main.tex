@@ -176,7 +176,7 @@ In our first result, we see that on a graph with 50 nodes, It only takes 10 appr
 \expOneTestOneFigure{images/part1/exp1_1b}{$test1b$: Bellman-Ford vs Bellman-Ford's Approximation}
 \FloatBarrier{}
 
-In our second test, we see than it also take
+In our second test, we see that it also takes approximately 10 relaxations. However, we see it takes slightly more, at 12 relaxations.
 
 \FloatBarrier{}
 \expOneTestOneFigure{images/part1/exp1_1c}{$test1c$: Bellman-Ford vs Bellman-Ford's Approximation w/ Negative Edge Weights}
@@ -358,6 +358,7 @@ With more relaxations this value decreases, and eventually settles on the real v
 %% ------------------------------------------------------------------------------------------ %%
 %% ------------------------------------------------------------------------------------------ %%
 
+\newpage
 \subsection{Mystery Algorithm - Two Functions}
 
 As stated, when we run a single source algorithm we end up solving for all the pairs that include that source. Thus, to solve the all-pairs problem, we should run it on all of our nodes (a `potential source').
