@@ -87,7 +87,7 @@ def determiningTimeComplexity(k = 5):
             #
             for i in range(n):
                 for j in range(n):
-                    w = random.randrange(-n*10, n*10)
+                    w = random.randrange(-500*10, 500*10)
                     G.add_edge(i, j, w)
 
             # Retime Mystery on Full
